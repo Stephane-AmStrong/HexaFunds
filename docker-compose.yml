@@ -1,0 +1,34 @@
+version: '3.4'
+
+services:
+  hexafunds.webapi:
+    image: ${DOCKER_REGISTRY-}hexafunds
+    container_name: hexafunds_api
+    build:
+        context: .
+        dockerfile: src/Presentation/WebApi/Dockerfile
+    ports:
+        - 5000:80
+        - 5001:443
+    depends_on:
+        - hexafunds.db
+
+  hexafunds.db:
+    image: postgres:15.0
+    container_name: hexafunds_db
+    volumes:
+        - ./db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "hexafunds", "-d", "hexafunds"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    
+    environment:
+        - POSTGRES_DB=hexafunds
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+    ports:
+        - 5432:5432
+  
