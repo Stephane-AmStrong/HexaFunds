@@ -1,4 +1,4 @@
-# 💰 HexaFunds 💰
+# 💰 Hexa Found Demo Project 💰
 
 ## Description
 
@@ -32,17 +32,27 @@ Ce projet est une implémentation d'un système de gestion de comptes bancaires 
 
 ## Prérequis
 
-- .NET SDK 6.0 ou supérieur
+- .NET SDK 8.0 ou supérieur
 - IDE compatible avec C# (Visual Studio, Rider, Visual Studio Code, etc.)
 
 ## Structure du projet
 
-- **src/Domain** : Contient les entités, interfaces et services de votre domaine.
-- **src/Application** : Contient les cas d'utilisation de votre application.
-- **src/Infrastructure** : Contient les implémentations des services d'infrastructure (persistance, API, etc.).
-- **src/UI** : Contient les interfaces utilisateur (API REST, CLI, etc.).
-- **tests** : Contient les tests unitaires et d'intégration.
+- **src/Core**
+  - **DataTransfertObjects** : Contient les objets de transfert de données (DTOs).
+  - **Domain** : Contient les entités et les règles métier.
+  - **Services.Abstractions** : Contient les interfaces des services.
+  - **Services** : Contient les implémentations des services métier.
+- **src/Infrastructure**
+  - **Persistence** : Contient les implémentations de la persistance des données.
+- **src/Presentation**
+  - **WebApi** : Contient l'API REST exposant les fonctionnalités de l'application.
+- **test**
+  - **Persistence.Test** : Contient les tests unitaires et d'intégration pour la persistance.
+  - **Services.Test** : Contient les tests unitaires pour les services métier.
+  - **WebApi.Test** : Contient les tests d'intégration pour l'API REST.
 
 ## Licence
 
 Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus d'informations.
+
+![class diagram-hexa](./assets/HexaFound Class Diagram.png)
