@@ -55,4 +55,4 @@ Ce projet est une implémentation d'un système de gestion de comptes bancaires 
 
 Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus d'informations.
 
-![class diagram-hexa](./assets/HexaFound Class Diagram.png)
+![class diagram-hexa](./assets/hexafound-class-diagram.png)
