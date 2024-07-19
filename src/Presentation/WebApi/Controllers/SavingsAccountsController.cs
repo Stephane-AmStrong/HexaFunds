@@ -2,7 +2,6 @@ using DataTransfertObjects;
 
 using Microsoft.AspNetCore.Mvc;
 
-using Services;
 using Services.Abstractions;
 
 namespace WebApplicationDocker.Controllers;
@@ -12,9 +11,9 @@ namespace WebApplicationDocker.Controllers;
 public class SavingsAccountsController(IServiceManager serviceManager) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> Get(CancellationToken cancellationToken)
+    public ActionResult<IEnumerable<SavingsAccountResponse>> Get()
     {
-        var savingsAccountsResponse = await serviceManager.SavingsAccountService.GetAllAsync(cancellationToken);
+        var savingsAccountsResponse = serviceManager.SavingsAccountService.GetAll();
 
         return Ok(savingsAccountsResponse);
     }
@@ -28,7 +27,7 @@ public class SavingsAccountsController(IServiceManager serviceManager) : Control
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] SavingsAccountRequest savingsAccountRequest, CancellationToken cancellationToken)
+    public async Task<ActionResult<SavingsAccountResponse>> Post([FromBody] SavingsAccountRequest savingsAccountRequest, CancellationToken cancellationToken)
     {
         var response = await serviceManager.SavingsAccountService.CreateAsync(savingsAccountRequest, cancellationToken);
 
