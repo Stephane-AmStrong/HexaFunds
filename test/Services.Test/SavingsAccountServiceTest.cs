@@ -32,14 +32,14 @@ public class SavingsAccountServiceTest
 
         _savingsAccounts =
         [
-            new() 
+            new()
             {
                 Id = Guid.NewGuid(),
                 AccountNumber = "3623456789",
                 Balance = 0,
                 BalanceCeiling = 500
             },
-            new() 
+            new()
             {
                 Id = Guid.NewGuid(),
                 AccountNumber = "8487654321",
@@ -59,7 +59,7 @@ public class SavingsAccountServiceTest
             AccountNumber = _savingsAccounts[0].AccountNumber,
             BalanceCeiling = _savingsAccounts[0].BalanceCeiling,
         };
-        
+
         var savingsAccount = new SavingsAccount
         {
             Id = _savingsAccounts[0].Id,
@@ -106,15 +106,14 @@ public class SavingsAccountServiceTest
         _mockSavingsAccountRepository.Setup(r => r.GetByIdAsync(accountId, _cancellationToken))
                                       .ReturnsAsync(savingsAccount);
 
-        _mockSavingsAccountRepository.Setup(r => r.DeleteAsync(savingsAccount, _cancellationToken))
-                                      .Returns(Task.CompletedTask);
+        _mockSavingsAccountRepository.Setup(r => r.Delete(savingsAccount));
 
         // Act
         await _savingsAccountService.DeleteAsync(accountId);
 
         // Assert
         _mockSavingsAccountRepository.Verify(r => r.GetByIdAsync(accountId, _cancellationToken), Times.Once);
-        _mockSavingsAccountRepository.Verify(r => r.DeleteAsync(savingsAccount, _cancellationToken), Times.Once);
+        _mockSavingsAccountRepository.Verify(r => r.Delete(savingsAccount), Times.Once);
         _mockUnitOfWork.Verify(r => r.SaveChangesAsync(_cancellationToken), Times.Once);
     }
 
@@ -131,22 +130,22 @@ public class SavingsAccountServiceTest
         await Assert.ThrowsAsync<AccountNotFoundException>(() => _savingsAccountService.DeleteAsync(accountId));
 
         _mockSavingsAccountRepository.Verify(r => r.GetByIdAsync(accountId, _cancellationToken), Times.Once);
-        _mockSavingsAccountRepository.Verify(r => r.DeleteAsync(It.IsAny<SavingsAccount>(), _cancellationToken), Times.Never);
+        _mockSavingsAccountRepository.Verify(r => r.Delete(It.IsAny<SavingsAccount>()), Times.Never);
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(_cancellationToken), Times.Never);
     }
 
     [Fact]
-    public async Task GetAllAsync_ShouldReturnAllAccounts()
+    public void GetAll_ShouldReturnAllAccounts()
     {
         // Arrange
-        _mockSavingsAccountRepository.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
-                                        .ReturnsAsync(_savingsAccounts);
+        _mockSavingsAccountRepository.Setup(r => r.GetAll())
+                                        .Returns(_savingsAccounts);
 
         // Act
-        var result = await _savingsAccountService.GetAllAsync();
+        var result = _savingsAccountService.GetAll();
 
         // Assert
-        _mockSavingsAccountRepository.Verify(r => r.GetAllAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _mockSavingsAccountRepository.Verify(r => r.GetAll(), Times.Once);
         Assert.Equal(_savingsAccounts.Count, result.Count());
     }
 
@@ -163,14 +162,14 @@ public class SavingsAccountServiceTest
             BalanceCeiling = _savingsAccounts[0].BalanceCeiling,
         };
 
-        _mockSavingsAccountRepository.Setup(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()))
+        _mockSavingsAccountRepository.Setup(r => r.GetByIdAsync(accountId, _cancellationToken))
                                         .ReturnsAsync(savingsAccount);
 
         // Act
         var result = await _savingsAccountService.GetByIdAsync(accountId);
 
         // Assert
-        _mockSavingsAccountRepository.Verify(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()), Times.Once);
+        _mockSavingsAccountRepository.Verify(r => r.GetByIdAsync(accountId, _cancellationToken), Times.Once);
         Assert.NotNull(result);
         Assert.Equal(savingsAccount.Id, result.Id);
     }
@@ -181,13 +180,13 @@ public class SavingsAccountServiceTest
         // Arrange
         var accountId = Guid.NewGuid();
 
-        _mockSavingsAccountRepository.Setup(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()))
+        _mockSavingsAccountRepository.Setup(r => r.GetByIdAsync(accountId, _cancellationToken))
                                         .ReturnsAsync((SavingsAccount?)null);
 
         // Act & Assert
         await Assert.ThrowsAsync<AccountNotFoundException>(() => _savingsAccountService.GetByIdAsync(accountId));
 
-        _mockSavingsAccountRepository.Verify(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()), Times.Once);
+        _mockSavingsAccountRepository.Verify(r => r.GetByIdAsync(accountId, _cancellationToken), Times.Once);
     }
 
     [Fact]
@@ -209,22 +208,21 @@ public class SavingsAccountServiceTest
             BalanceCeiling = _savingsAccounts[0].BalanceCeiling
         };
 
-        _mockSavingsAccountRepository.Setup(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()))
+        _mockSavingsAccountRepository.Setup(r => r.GetByIdAsync(accountId, _cancellationToken))
                                         .ReturnsAsync(existingAccount);
 
-        _mockSavingsAccountRepository.Setup(r => r.UpdateAsync(existingAccount, It.IsAny<CancellationToken>()))
-                                        .Returns(Task.CompletedTask);
+        _mockSavingsAccountRepository.Setup(r => r.Update(existingAccount));
 
-        _mockUnitOfWork.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()))
+        _mockUnitOfWork.Setup(u => u.SaveChangesAsync(_cancellationToken))
                         .ReturnsAsync(1);
 
         // Act
         await _savingsAccountService.UpdateAsync(accountId, request);
 
         // Assert
-        _mockSavingsAccountRepository.Verify(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()), Times.Once);
-        _mockSavingsAccountRepository.Verify(r => r.UpdateAsync(existingAccount, It.IsAny<CancellationToken>()), Times.Once);
-        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _mockSavingsAccountRepository.Verify(r => r.GetByIdAsync(accountId, _cancellationToken), Times.Once);
+        _mockSavingsAccountRepository.Verify(r => r.Update(existingAccount), Times.Once);
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(_cancellationToken), Times.Once);
     }
 
     [Fact]
@@ -239,15 +237,15 @@ public class SavingsAccountServiceTest
             BalanceCeiling = _savingsAccounts[0].BalanceCeiling
         };
 
-        _mockSavingsAccountRepository.Setup(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()))
+        _mockSavingsAccountRepository.Setup(r => r.GetByIdAsync(accountId, _cancellationToken))
                                         .ReturnsAsync((SavingsAccount?)null);
 
         // Act & Assert
         await Assert.ThrowsAsync<AccountNotFoundException>(() => _savingsAccountService.UpdateAsync(accountId, request));
 
-        _mockSavingsAccountRepository.Verify(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()), Times.Once);
-        _mockSavingsAccountRepository.Verify(r => r.UpdateAsync(It.IsAny<SavingsAccount>(), It.IsAny<CancellationToken>()), Times.Never);
-        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+        _mockSavingsAccountRepository.Verify(r => r.GetByIdAsync(accountId, _cancellationToken), Times.Once);
+        _mockSavingsAccountRepository.Verify(r => r.Update(It.IsAny<SavingsAccount>()), Times.Never);
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(_cancellationToken), Times.Never);
     }
 
 }
