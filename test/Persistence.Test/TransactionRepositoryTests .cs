@@ -56,11 +56,11 @@ public class TransactionRepositoryTests : IDisposable
         _context.Transactions.Add(_creditTransaction);
         await _context.SaveChangesAsync();
 
-        await _transactionRepository.DeleteAsync(_creditTransaction, CancellationToken.None);
+        _transactionRepository.Delete(_creditTransaction);
         await _context.SaveChangesAsync();
 
-        var transactionInDb = await _context.Transactions.FindAsync(_creditTransaction.Id);
-        Assert.Null(transactionInDb);
+        var accountInDb = await _context.Transactions.FindAsync(_creditTransaction.Id);
+        Assert.Null(accountInDb);
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public class TransactionRepositoryTests : IDisposable
         _context.Transactions.AddRange(transactions);
         await _context.SaveChangesAsync();
 
-        var result = await _transactionRepository.GetAllAsync(CancellationToken.None);
+        var result = _transactionRepository.GetAll();
 
         Assert.Equal(2, result.Count());
     }
@@ -112,7 +112,7 @@ public class TransactionRepositoryTests : IDisposable
     }
 
     [Fact]
-    public async Task UpdateAsync_ShouldUpdateTransaction()
+    public async void UpdateAsync_ShouldUpdateTransaction()
     {
 
         _context.Transactions.Add(_creditTransaction);
@@ -120,7 +120,7 @@ public class TransactionRepositoryTests : IDisposable
         var currentDate = DateTime.UtcNow;
 
         _creditTransaction.Date = currentDate;
-        await _transactionRepository.UpdateAsync(_creditTransaction, CancellationToken.None);
+        _transactionRepository.Update(_creditTransaction);
         await _context.SaveChangesAsync();
 
         var transactionInDb = await _context.Transactions.FindAsync(_creditTransaction.Id);
