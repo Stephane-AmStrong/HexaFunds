@@ -12,9 +12,9 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
 
     protected BankingDbContext BankingDbContext { get; set; }
 
-    public async Task BaseCreateAsync(T entity, CancellationToken cancellationToken)
+    public Task BaseCreateAsync(T entity, CancellationToken cancellationToken)
     {
-        await BankingDbContext.Set<T>().AddAsync(entity, cancellationToken);
+        return BankingDbContext.Set<T>().AddAsync(entity, cancellationToken).AsTask();
     }
 
     public void BaseDelete(T entity)

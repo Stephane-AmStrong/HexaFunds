@@ -6,30 +6,30 @@ namespace Persistence.Repository;
 
 public sealed class CheckingAccountRepository(BankingDbContext dbContext) : RepositoryBase<CheckingAccount>(dbContext), ICheckingAccountRepository
 {
-    public async Task CreateAsync(CheckingAccount checkingAccount, CancellationToken cancellationToken)
+    public Task CreateAsync(CheckingAccount checkingAccount, CancellationToken cancellationToken)
     {
-        await BaseCreateAsync(checkingAccount, cancellationToken);
+        return BaseCreateAsync(checkingAccount, cancellationToken);
     }
 
-    public async Task DeleteAsync(CheckingAccount checkingAccount, CancellationToken cancellationToken)
+    public void Delete(CheckingAccount checkingAccount)
     {
-        await Task.Run(() => BaseDelete(checkingAccount), cancellationToken);
+        BaseDelete(checkingAccount);
     }
 
-    public async Task<IEnumerable<CheckingAccount>> GetAllAsync(CancellationToken cancellationToken)
+    public IEnumerable<CheckingAccount> GetAll()
     {
-        return await BaseGetAll().ToListAsync(cancellationToken);
+        return BaseGetAll().AsEnumerable();
     }
 
-    public async Task<CheckingAccount?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public Task<CheckingAccount?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await BaseFindByCondition(checkingAccount => checkingAccount.Id.Equals(id))
+        return BaseFindByCondition(checkingAccount => checkingAccount.Id.Equals(id))
             .Include(x => x.Transactions)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(CheckingAccount checkingAccount, CancellationToken cancellationToken)
+    public void Update(CheckingAccount checkingAccount)
     {
-        await Task.Run(() => BaseUpdate(checkingAccount), cancellationToken);
+        BaseUpdate(checkingAccount);
     }
 }

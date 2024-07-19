@@ -6,19 +6,19 @@ namespace Persistence.Repository;
 
 public sealed class SavingsAccountRepository(BankingDbContext dbContext) : RepositoryBase<SavingsAccount>(dbContext), ISavingsAccountRepository
 {
-    public async Task CreateAsync(SavingsAccount savingsAccount, CancellationToken cancellationToken)
+    public Task CreateAsync(SavingsAccount savingsAccount, CancellationToken cancellationToken)
     {
-        await BaseCreateAsync(savingsAccount, cancellationToken);
+        return BaseCreateAsync(savingsAccount, cancellationToken);
     }
 
-    public async Task DeleteAsync(SavingsAccount savingsAccount, CancellationToken cancellationToken)
+    public void Delete(SavingsAccount savingsAccount)
     {
-        await Task.Run(()=> BaseDelete(savingsAccount), cancellationToken);
+        BaseDelete(savingsAccount);
     }
 
-    public async Task<IEnumerable<SavingsAccount>> GetAllAsync(CancellationToken cancellationToken)
+    public IEnumerable<SavingsAccount> GetAll()
     {
-        return await BaseGetAll().ToListAsync(cancellationToken);
+        return BaseGetAll().AsEnumerable();
     }
 
     public async Task<SavingsAccount?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
@@ -28,8 +28,8 @@ public sealed class SavingsAccountRepository(BankingDbContext dbContext) : Repos
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(SavingsAccount savingsAccount, CancellationToken cancellationToken)
+    public void Update(SavingsAccount savingsAccount)
     {
-        await Task.Run(()=> BaseUpdate(savingsAccount), cancellationToken);
+        BaseUpdate(savingsAccount);
     }
 }
