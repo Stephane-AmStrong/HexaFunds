@@ -33,19 +33,21 @@ public class SavingsAccountsControllerTests
     }
 
     [Fact]
-    public async Task Get_ShouldReturnOkWithSavingsAccounts()
+    public void Get_ShouldReturnOkWithSavingsAccounts()
     {
         // Arrange
         var savingsAccounts = new List<SavingsAccountResponse> { _savingsAccountResponse };
-        _mockSavingsAccountService.Setup(s => s.GetAllAsync(_cancellationToken)).ReturnsAsync(savingsAccounts);
+        _mockSavingsAccountService.Setup(s => s.GetAll()).Returns(savingsAccounts);
 
         // Act
-        var result = await _controller.Get(CancellationToken.None);
+        var result = _controller.Get();
 
         // Assert
-        _mockSavingsAccountService.Verify(r => r.GetAllAsync(_cancellationToken), Times.Once);
-        var okResult = Assert.IsType<OkObjectResult>(result);
+        _mockSavingsAccountService.Verify(r => r.GetAll(), Times.Once);
+
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
         var returnValue = Assert.IsType<List<SavingsAccountResponse>>(okResult.Value);
+
         Assert.Equal(savingsAccounts.Count, returnValue.Count);
     }
 
@@ -60,8 +62,10 @@ public class SavingsAccountsControllerTests
 
         // Assert
         _mockSavingsAccountService.Verify(r => r.GetByIdAsync(It.IsAny<Guid>(), _cancellationToken), Times.Once);
+
         var okResult = Assert.IsType<OkObjectResult>(result);
         var returnValue = Assert.IsType<SavingsAccountResponse>(okResult.Value);
+
         Assert.Equal(_savingsAccountResponse.Id, returnValue.Id);
         Assert.Equal(_savingsAccountResponse.AccountNumber, returnValue.AccountNumber);
     }
@@ -77,8 +81,10 @@ public class SavingsAccountsControllerTests
 
         // Assert
         _mockSavingsAccountService.Verify(r => r.CreateAsync(It.IsAny<SavingsAccountRequest>(), _cancellationToken), Times.Once);
-        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+
+        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
         var returnValue = Assert.IsType<SavingsAccountResponse>(createdAtActionResult.Value);
+
         Assert.Equal(_savingsAccountResponse.Id, returnValue.Id);
     }
 
@@ -94,6 +100,7 @@ public class SavingsAccountsControllerTests
 
         // Assert
         _mockSavingsAccountService.Verify(r => r.DeleteAsync(It.IsAny<Guid>(), _cancellationToken), Times.Once);
+
         Assert.IsType<NoContentResult>(result);
     }
 
@@ -110,6 +117,7 @@ public class SavingsAccountsControllerTests
 
         // Assert
         _mockSavingsAccountService.Verify(r => r.UpdateAsync(It.IsAny<Guid>(), It.IsAny<SavingsAccountRequest>(), _cancellationToken), Times.Once);
+
         Assert.IsType<NoContentResult>(result);
     }
 }
