@@ -32,14 +32,14 @@ public class CheckingAccountServiceTest
 
         _checkingAccounts =
         [
-            new() 
+            new()
             {
                 Id = Guid.NewGuid(),
                 AccountNumber = "123456789",
                 Balance = 1000.00f,
                 OverdraftLimit = 500
             },
-            new() 
+            new()
             {
                 Id = Guid.NewGuid(),
                 AccountNumber = "987654321",
@@ -59,7 +59,7 @@ public class CheckingAccountServiceTest
             AccountNumber = _checkingAccounts[0].AccountNumber,
             OverdraftLimit = _checkingAccounts[0].OverdraftLimit,
         };
-        
+
         var checkingAccount = new CheckingAccount
         {
             Id = _checkingAccounts[0].Id,
@@ -78,7 +78,7 @@ public class CheckingAccountServiceTest
                        .ReturnsAsync(1);
 
         // Act
-        var response = await _checkingAccountService.CreateAsync(request);
+        var response = await _checkingAccountService.CreateAsync(request, _cancellationToken);
 
         // Assert
         _mockCheckingAccountRepository.Verify(r => r.CreateAsync(It.IsAny<CheckingAccount>(), _cancellationToken), Times.Once);
@@ -106,15 +106,14 @@ public class CheckingAccountServiceTest
         _mockCheckingAccountRepository.Setup(r => r.GetByIdAsync(accountId, _cancellationToken))
                                       .ReturnsAsync(checkingAccount);
 
-        _mockCheckingAccountRepository.Setup(r => r.DeleteAsync(checkingAccount, _cancellationToken))
-                                      .Returns(Task.CompletedTask);
+        _mockCheckingAccountRepository.Setup(r => r.Delete(checkingAccount));
 
         // Act
-        await _checkingAccountService.DeleteAsync(accountId);
+        await _checkingAccountService.DeleteAsync(accountId, _cancellationToken);
 
         // Assert
         _mockCheckingAccountRepository.Verify(r => r.GetByIdAsync(accountId, _cancellationToken), Times.Once);
-        _mockCheckingAccountRepository.Verify(r => r.DeleteAsync(checkingAccount, _cancellationToken), Times.Once);
+        _mockCheckingAccountRepository.Verify(r => r.Delete(checkingAccount), Times.Once);
         _mockUnitOfWork.Verify(r => r.SaveChangesAsync(_cancellationToken), Times.Once);
     }
 
@@ -128,27 +127,27 @@ public class CheckingAccountServiceTest
                                       .ReturnsAsync((CheckingAccount?)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<AccountNotFoundException>(() => _checkingAccountService.DeleteAsync(accountId));
+        await Assert.ThrowsAsync<AccountNotFoundException>(() => _checkingAccountService.DeleteAsync(accountId, _cancellationToken));
 
         _mockCheckingAccountRepository.Verify(r => r.GetByIdAsync(accountId, _cancellationToken), Times.Once);
-        _mockCheckingAccountRepository.Verify(r => r.DeleteAsync(It.IsAny<CheckingAccount>(), _cancellationToken), Times.Never);
+        _mockCheckingAccountRepository.Verify(r => r.Delete(It.IsAny<CheckingAccount>()), Times.Never);
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(_cancellationToken), Times.Never);
     }
 
     ////
     ///
     [Fact]
-    public async Task GetAllAsync_ShouldReturnAllAccounts()
+    public void GetAll_ShouldReturnAllAccounts()
     {
         // Arrange
-        _mockCheckingAccountRepository.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
-                                        .ReturnsAsync(_checkingAccounts);
+        _mockCheckingAccountRepository.Setup(r => r.GetAll())
+                                        .Returns(_checkingAccounts);
 
         // Act
-        var result = await _checkingAccountService.GetAllAsync();
+        var result = _checkingAccountService.GetAll();
 
         // Assert
-        _mockCheckingAccountRepository.Verify(r => r.GetAllAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _mockCheckingAccountRepository.Verify(r => r.GetAll(), Times.Once);
         Assert.Equal(_checkingAccounts.Count, result.Count());
     }
 
@@ -165,14 +164,14 @@ public class CheckingAccountServiceTest
             OverdraftLimit = _checkingAccounts[0].OverdraftLimit,
         };
 
-        _mockCheckingAccountRepository.Setup(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()))
+        _mockCheckingAccountRepository.Setup(r => r.GetByIdAsync(accountId, _cancellationToken))
                                         .ReturnsAsync(checkingAccount);
 
         // Act
-        var result = await _checkingAccountService.GetByIdAsync(accountId);
+        var result = await _checkingAccountService.GetByIdAsync(accountId, _cancellationToken);
 
         // Assert
-        _mockCheckingAccountRepository.Verify(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()), Times.Once);
+        _mockCheckingAccountRepository.Verify(r => r.GetByIdAsync(accountId, _cancellationToken), Times.Once);
         Assert.NotNull(result);
         Assert.Equal(checkingAccount.Id, result.Id);
     }
@@ -183,13 +182,13 @@ public class CheckingAccountServiceTest
         // Arrange
         var accountId = Guid.NewGuid();
 
-        _mockCheckingAccountRepository.Setup(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()))
+        _mockCheckingAccountRepository.Setup(r => r.GetByIdAsync(accountId, _cancellationToken))
                                         .ReturnsAsync((CheckingAccount?)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<AccountNotFoundException>(() => _checkingAccountService.GetByIdAsync(accountId));
+        await Assert.ThrowsAsync<AccountNotFoundException>(() => _checkingAccountService.GetByIdAsync(accountId, _cancellationToken));
 
-        _mockCheckingAccountRepository.Verify(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()), Times.Once);
+        _mockCheckingAccountRepository.Verify(r => r.GetByIdAsync(accountId, _cancellationToken), Times.Once);
     }
 
     [Fact]
@@ -211,22 +210,21 @@ public class CheckingAccountServiceTest
             OverdraftLimit = _checkingAccounts[0].OverdraftLimit
         };
 
-        _mockCheckingAccountRepository.Setup(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()))
+        _mockCheckingAccountRepository.Setup(r => r.GetByIdAsync(accountId, _cancellationToken))
                                         .ReturnsAsync(existingAccount);
 
-        _mockCheckingAccountRepository.Setup(r => r.UpdateAsync(existingAccount, It.IsAny<CancellationToken>()))
-                                        .Returns(Task.CompletedTask);
+        _mockCheckingAccountRepository.Setup(r => r.Update(existingAccount));
 
-        _mockUnitOfWork.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()))
+        _mockUnitOfWork.Setup(u => u.SaveChangesAsync(_cancellationToken))
                         .ReturnsAsync(1);
 
         // Act
-        await _checkingAccountService.UpdateAsync(accountId, request);
+        await _checkingAccountService.UpdateAsync(accountId, request, _cancellationToken);
 
         // Assert
-        _mockCheckingAccountRepository.Verify(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()), Times.Once);
-        _mockCheckingAccountRepository.Verify(r => r.UpdateAsync(existingAccount, It.IsAny<CancellationToken>()), Times.Once);
-        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _mockCheckingAccountRepository.Verify(r => r.GetByIdAsync(accountId, _cancellationToken), Times.Once);
+        _mockCheckingAccountRepository.Verify(r => r.Update(existingAccount), Times.Once);
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(_cancellationToken), Times.Once);
     }
 
     [Fact]
@@ -241,15 +239,15 @@ public class CheckingAccountServiceTest
             OverdraftLimit = _checkingAccounts[0].OverdraftLimit
         };
 
-        _mockCheckingAccountRepository.Setup(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()))
+        _mockCheckingAccountRepository.Setup(r => r.GetByIdAsync(accountId, _cancellationToken))
                                         .ReturnsAsync((CheckingAccount?)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<AccountNotFoundException>(() => _checkingAccountService.UpdateAsync(accountId, request));
+        await Assert.ThrowsAsync<AccountNotFoundException>(() => _checkingAccountService.UpdateAsync(accountId, request, _cancellationToken));
 
-        _mockCheckingAccountRepository.Verify(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()), Times.Once);
-        _mockCheckingAccountRepository.Verify(r => r.UpdateAsync(It.IsAny<CheckingAccount>(), It.IsAny<CancellationToken>()), Times.Never);
-        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+        _mockCheckingAccountRepository.Verify(r => r.GetByIdAsync(accountId, _cancellationToken), Times.Once);
+        _mockCheckingAccountRepository.Verify(r => r.Update(It.IsAny<CheckingAccount>()), Times.Never);
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(_cancellationToken), Times.Never);
     }
 
 }

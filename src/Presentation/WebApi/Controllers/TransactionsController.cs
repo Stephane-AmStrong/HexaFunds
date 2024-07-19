@@ -2,7 +2,6 @@ using DataTransfertObjects;
 
 using Microsoft.AspNetCore.Mvc;
 
-using Services;
 using Services.Abstractions;
 
 namespace WebApplicationDocker.Controllers;
@@ -12,15 +11,15 @@ namespace WebApplicationDocker.Controllers;
 public class TransactionsController(IServiceManager serviceManager) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> Get(CancellationToken cancellationToken)
+    public ActionResult<IEnumerable<TransactionResponse>> Get()
     {
-        var transactionAccountsResponse = await serviceManager.TransactionService.GetAllAsync(cancellationToken);
+        var transactionAccountsResponse = serviceManager.TransactionService.GetAll();
 
         return Ok(transactionAccountsResponse);
     }
 
     [HttpGet("statement")]
-    public async Task<IActionResult> GetAccountStatement([FromQuery]AccountStatementQuery accountStatementQuery, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAccountStatement([FromQuery] AccountStatementQuery accountStatementQuery, CancellationToken cancellationToken)
     {
         var accountStatementResponse = await serviceManager.TransactionService.GetAccountStatementAsync(accountStatementQuery, cancellationToken);
 
@@ -28,7 +27,7 @@ public class TransactionsController(IServiceManager serviceManager) : Controller
     }
 
     [HttpGet("account/{accountId:guid}")]
-    public async Task<IActionResult> GetByAccountId(Guid accountId, CancellationToken cancellationToken)
+    public async Task<ActionResult<AccountTransactionsResponse>> GetByAccountId(Guid accountId, CancellationToken cancellationToken)
     {
         var transactionAccountsResponse = await serviceManager.TransactionService.GetByAccountIdAsync(accountId, cancellationToken);
 
@@ -36,7 +35,7 @@ public class TransactionsController(IServiceManager serviceManager) : Controller
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult<TransactionResponse?>> Get(Guid id, CancellationToken cancellationToken)
     {
         var transactionAccountResponse = await serviceManager.TransactionService.GetByIdAsync(id, cancellationToken);
 
@@ -44,7 +43,7 @@ public class TransactionsController(IServiceManager serviceManager) : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] TransactionRequest transactionAccountRequest, CancellationToken cancellationToken)
+    public async Task<ActionResult<TransactionResponse?>> Post([FromBody] TransactionRequest transactionAccountRequest, CancellationToken cancellationToken)
     {
         var response = await serviceManager.TransactionService.CreateAsync(transactionAccountRequest, cancellationToken);
 

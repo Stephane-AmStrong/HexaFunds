@@ -34,7 +34,7 @@ public sealed class TransactionService(IRepositoryManager repositoryManager) : I
 
             await repositoryManager.TransactionRepository.CreateAsync(transaction, cancellationToken).ConfigureAwait(false);
 
-            await repositoryManager.CheckingAccountRepository.UpdateAsync(checkingAccount, cancellationToken).ConfigureAwait(false);
+            repositoryManager.CheckingAccountRepository.Update(checkingAccount);
         }
 
         if (account is SavingsAccount savingsAccount)
@@ -47,17 +47,17 @@ public sealed class TransactionService(IRepositoryManager repositoryManager) : I
 
             await repositoryManager.TransactionRepository.CreateAsync(transaction, cancellationToken).ConfigureAwait(false);
 
-            await repositoryManager.SavingsAccountRepository.UpdateAsync(savingsAccount, cancellationToken).ConfigureAwait(false);
+            repositoryManager.SavingsAccountRepository.Update(savingsAccount);
         }
 
-        await repositoryManager.UnitOfWork.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await repositoryManager.UnitOfWork.SaveChangesAsync(cancellationToken);
 
         return transaction.Adapt<TransactionResponse>();
     }
 
-    public async Task<IEnumerable<TransactionResponse>> GetAllAsync(CancellationToken cancellationToken = default)
+    public IEnumerable<TransactionResponse> GetAll()
     {
-        var transactions = await repositoryManager.TransactionRepository.GetAllAsync(cancellationToken).ConfigureAwait(false);
+        var transactions = repositoryManager.TransactionRepository.GetAll();
 
         return transactions.Adapt<IEnumerable<TransactionResponse>>();
     }
@@ -69,14 +69,21 @@ public sealed class TransactionService(IRepositoryManager repositoryManager) : I
         return transaction.Adapt<TransactionResponse>();
     }
 
-    public async Task<IEnumerable<TransactionResponse>> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken = default)
+    public async Task<AccountTransactionsResponse> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken = default)
     {
         var account = await GetAccount(repositoryManager, accountId, cancellationToken).ConfigureAwait(false);
 
         var transactions = repositoryManager.TransactionRepository.GetByCondition(transaction => transaction.AccountId == accountId)
             .OrderByDescending(t => t.Date);
 
-        return transactions.Adapt<IEnumerable<TransactionResponse>>();
+        var accountTransactions = new AccountTransactionsResponse
+        {
+            CheckingAccount = account is CheckingAccount checkingAccount ? checkingAccount.Adapt<CheckingAccountResponse>() : null,
+            SavingsAccount = account is SavingsAccount savingsAccount ? savingsAccount.Adapt<SavingsAccountResponse>() : null,
+            Transactions = transactions.Adapt<IEnumerable<TransactionResponse>>()
+        };
+
+        return accountTransactions;
     }
 
 

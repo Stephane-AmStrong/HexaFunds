@@ -4,9 +4,9 @@ namespace Services.Abstractions;
 
 public interface ITransactionService
 {
-    Task<IEnumerable<TransactionResponse>> GetAllAsync(CancellationToken cancellationToken = default);
-    Task<AccountStatementResponse> GetAccountStatementAsync(AccountStatementQuery accountStatementQuery, CancellationToken cancellationToken = default);
-    Task<TransactionResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<IEnumerable<TransactionResponse>> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken = default);
-    Task<TransactionResponse> CreateAsync(TransactionRequest transaction, CancellationToken cancellationToken = default);
+    IEnumerable<TransactionResponse> GetAll();
+    Task<AccountStatementResponse> GetAccountStatementAsync(AccountStatementQuery accountStatementQuery, CancellationToken cancellationToken);
+    Task<TransactionResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<AccountTransactionsResponse> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken);
+    Task<TransactionResponse> CreateAsync(TransactionRequest transaction, CancellationToken cancellationToken);
 }

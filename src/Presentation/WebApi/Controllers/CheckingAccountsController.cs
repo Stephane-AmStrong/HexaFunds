@@ -11,15 +11,15 @@ namespace WebApplicationDocker.Controllers;
 public class CheckingAccountsController(IServiceManager serviceManager) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> Get(CancellationToken cancellationToken)
+    public ActionResult<IEnumerable<CheckingAccountResponse>> Get()
     {
-        var checkingAccountsResponse = await serviceManager.CheckingAccountService.GetAllAsync(cancellationToken);
+        var checkingAccountsResponse = serviceManager.CheckingAccountService.GetAll();
 
         return Ok(checkingAccountsResponse);
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult<CheckingAccountResponse>> Get(Guid id, CancellationToken cancellationToken)
     {
         var checkingAccountResponse = await serviceManager.CheckingAccountService.GetByIdAsync(id, cancellationToken);
 
@@ -27,7 +27,7 @@ public class CheckingAccountsController(IServiceManager serviceManager) : Contro
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CheckingAccountRequest checkingAccountRequest, CancellationToken cancellationToken)
+    public async Task<ActionResult<CheckingAccountResponse>> Post([FromBody] CheckingAccountRequest checkingAccountRequest, CancellationToken cancellationToken)
     {
         var response = await serviceManager.CheckingAccountService.CreateAsync(checkingAccountRequest, cancellationToken);
 

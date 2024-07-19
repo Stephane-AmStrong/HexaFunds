@@ -1,3 +1,5 @@
+using System.Net;
+
 using DataTransfertObjects;
 
 using Microsoft.AspNetCore.Mvc;
@@ -33,18 +35,18 @@ public class CheckingAccountsControllerTests
     }
 
     [Fact]
-    public async Task Get_ShouldReturnOkWithCheckingAccounts()
+    public void Get_ShouldReturnOkWithCheckingAccounts()
     {
         // Arrange
         var checkingAccounts = new List<CheckingAccountResponse> { _checkingAccountResponse };
-        _mockCheckingAccountService.Setup(s => s.GetAllAsync(_cancellationToken)).ReturnsAsync(checkingAccounts);
+        _mockCheckingAccountService.Setup(s => s.GetAll()).Returns(checkingAccounts);
 
         // Act
-        var result = await _controller.Get(CancellationToken.None);
+        var result = _controller.Get();
 
         // Assert
-        _mockCheckingAccountService.Verify(r => r.GetAllAsync(_cancellationToken), Times.Once);
-        var okResult = Assert.IsType<OkObjectResult>(result);
+        _mockCheckingAccountService.Verify(r => r.GetAll(), Times.Once);
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
         var returnValue = Assert.IsType<List<CheckingAccountResponse>>(okResult.Value);
         Assert.Equal(checkingAccounts.Count, returnValue.Count);
     }
@@ -60,8 +62,10 @@ public class CheckingAccountsControllerTests
 
         // Assert
         _mockCheckingAccountService.Verify(r => r.GetByIdAsync(It.IsAny<Guid>(), _cancellationToken), Times.Once);
-        var okResult = Assert.IsType<OkObjectResult>(result);
+
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
         var returnValue = Assert.IsType<CheckingAccountResponse>(okResult.Value);
+
         Assert.Equal(_checkingAccountResponse.Id, returnValue.Id);
         Assert.Equal(_checkingAccountResponse.AccountNumber, returnValue.AccountNumber);
     }
@@ -70,14 +74,24 @@ public class CheckingAccountsControllerTests
     public async Task Post_ShouldReturnCreatedAtActionWithCheckingAccount()
     {
         // Arrange
-        _mockCheckingAccountService.Setup(s => s.CreateAsync(_checkingAccountRequest, _cancellationToken)).ReturnsAsync(_checkingAccountResponse);
+        _mockCheckingAccountService
+            .Setup(s => s.CreateAsync(_checkingAccountRequest, _cancellationToken))
+            .ReturnsAsync(_checkingAccountResponse);
 
         // Act
-        var result = await _controller.Post(_checkingAccountRequest, CancellationToken.None);
+        var result = await _controller.Post(_checkingAccountRequest, _cancellationToken);
 
         // Assert
-        _mockCheckingAccountService.Verify(r => r.CreateAsync(It.IsAny<CheckingAccountRequest>(), _cancellationToken), Times.Once);
-        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+        _mockCheckingAccountService.Verify(
+            r => r.CreateAsync(It.IsAny<CheckingAccountRequest>(), _cancellationToken),
+            Times.Once);
+
+        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
+
+        Assert.NotNull(createdAtActionResult);
+
+        Assert.Equal((int)HttpStatusCode.Created, createdAtActionResult.StatusCode);
+
         var returnValue = Assert.IsType<CheckingAccountResponse>(createdAtActionResult.Value);
         Assert.Equal(_checkingAccountResponse.Id, returnValue.Id);
     }
@@ -102,7 +116,7 @@ public class CheckingAccountsControllerTests
     {
         // Arrange
         var id = Guid.NewGuid();
-       
+
         _mockCheckingAccountService.Setup(s => s.UpdateAsync(id, _checkingAccountRequest, _cancellationToken)).Returns(Task.CompletedTask);
 
         // Act

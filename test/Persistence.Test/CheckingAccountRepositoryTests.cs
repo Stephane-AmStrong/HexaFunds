@@ -48,7 +48,7 @@ public class CheckingAccountRepositoryTests : IDisposable
         _context.CheckingAccounts.Add(_checkingAccount1);
         await _context.SaveChangesAsync();
 
-        await _checkingAccountRepository.DeleteAsync(_checkingAccount1, CancellationToken.None);
+        _checkingAccountRepository.Delete(_checkingAccount1);
         await _context.SaveChangesAsync();
 
         var accountInDb = await _context.CheckingAccounts.FindAsync(_checkingAccount1.Id);
@@ -67,7 +67,7 @@ public class CheckingAccountRepositoryTests : IDisposable
         _context.CheckingAccounts.AddRange(_checkingAccounts);
         await _context.SaveChangesAsync();
 
-        var result = await _checkingAccountRepository.GetAllAsync(CancellationToken.None);
+        var result = _checkingAccountRepository.GetAll();
 
         Assert.Equal(2, result.Count());
     }
@@ -86,13 +86,13 @@ public class CheckingAccountRepositoryTests : IDisposable
     }
 
     [Fact]
-    public async Task UpdateAsync_ShouldUpdateCheckingAccount()
+    public async Task Update_ShouldUpdateCheckingAccount()
     {
         _context.CheckingAccounts.Add(_checkingAccount1);
         await _context.SaveChangesAsync();
 
         _checkingAccount1.Balance = 2000;
-        await _checkingAccountRepository.UpdateAsync(_checkingAccount1, CancellationToken.None);
+        _checkingAccountRepository.Update(_checkingAccount1);
         await _context.SaveChangesAsync();
 
         var accountInDb = await _context.CheckingAccounts.FindAsync(_checkingAccount1.Id);

@@ -48,7 +48,7 @@ public class SavingsAccountRepositoryTests : IDisposable
         _context.SavingsAccounts.Add(_savingsAccount1);
         await _context.SaveChangesAsync();
 
-        await _savingsAccountRepository.DeleteAsync(_savingsAccount1, CancellationToken.None);
+        _savingsAccountRepository.Delete(_savingsAccount1);
         await _context.SaveChangesAsync();
 
         var accountInDb = await _context.SavingsAccounts.FindAsync(_savingsAccount1.Id);
@@ -67,7 +67,7 @@ public class SavingsAccountRepositoryTests : IDisposable
         _context.SavingsAccounts.AddRange(_savingsAccounts);
         await _context.SaveChangesAsync();
 
-        var result = await _savingsAccountRepository.GetAllAsync(CancellationToken.None);
+        var result = _savingsAccountRepository.GetAll();
 
         Assert.Equal(2, result.Count());
     }
@@ -92,7 +92,7 @@ public class SavingsAccountRepositoryTests : IDisposable
         await _context.SaveChangesAsync();
 
         _savingsAccount1.Balance = 2000;
-        await _savingsAccountRepository.UpdateAsync(_savingsAccount1, CancellationToken.None);
+        _savingsAccountRepository.Update(_savingsAccount1);
         await _context.SaveChangesAsync();
 
         var accountInDb = await _context.SavingsAccounts.FindAsync(_savingsAccount1.Id);

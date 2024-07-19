@@ -33,6 +33,7 @@ public class TransactionServiceTest
         _mockSavingsAccountRepository = new Mock<ISavingsAccountRepository>();
         _mockBankAccountRepository = new Mock<IBankAccountRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
+        _cancellationToken = It.IsAny<CancellationToken>();
 
         _mockRepositoryManager.Setup(r => r.TransactionRepository).Returns(_mockTransactionRepository.Object);
         _mockRepositoryManager.Setup(r => r.CheckingAccountRepository).Returns(_mockCheckingAccountRepository.Object);
@@ -132,8 +133,7 @@ public class TransactionServiceTest
         _mockTransactionRepository.Setup(r => r.CreateAsync(transaction, _cancellationToken))
                                       .Returns(Task.CompletedTask);
 
-        _mockCheckingAccountRepository.Setup(r => r.UpdateAsync((CheckingAccount)_accounts[0], It.IsAny<CancellationToken>()))
-                                  .Returns(Task.CompletedTask);
+        _mockCheckingAccountRepository.Setup(r => r.Update((CheckingAccount)_accounts[0]));
 
         _mockUnitOfWork.Setup(u => u.SaveChangesAsync(_cancellationToken))
                        .ReturnsAsync(1);
@@ -145,7 +145,7 @@ public class TransactionServiceTest
 
         _mockBankAccountRepository.Verify(r => r.GetByIdAsync(request.AccountId, _cancellationToken), Times.Once);
         _mockTransactionRepository.Verify(r => r.CreateAsync(It.IsAny<Transaction>(), _cancellationToken), Times.Once);
-        _mockCheckingAccountRepository.Verify(r => r.UpdateAsync(It.IsAny<CheckingAccount>(), _cancellationToken), Times.Once);
+        _mockCheckingAccountRepository.Verify(r => r.Update(It.IsAny<CheckingAccount>()), Times.Once);
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(_cancellationToken), Times.Once);
 
         Assert.NotNull(response);
@@ -177,8 +177,7 @@ public class TransactionServiceTest
         _mockTransactionRepository.Setup(r => r.CreateAsync(It.IsAny<Transaction>(), _cancellationToken))
                                       .Returns(Task.CompletedTask);
 
-        _mockSavingsAccountRepository.Setup(r => r.UpdateAsync(It.IsAny<SavingsAccount>(), It.IsAny<CancellationToken>()))
-                                  .Returns(Task.CompletedTask);
+        _mockSavingsAccountRepository.Setup(r => r.Update(It.IsAny<SavingsAccount>()));
 
         _mockUnitOfWork.Setup(u => u.SaveChangesAsync(_cancellationToken))
                        .ReturnsAsync(1);
@@ -190,7 +189,7 @@ public class TransactionServiceTest
 
         _mockBankAccountRepository.Verify(r => r.GetByIdAsync(request.AccountId, _cancellationToken), Times.Once);
         _mockTransactionRepository.Verify(r => r.CreateAsync(It.IsAny<Transaction>(), _cancellationToken), Times.Once);
-        _mockSavingsAccountRepository.Verify(r => r.UpdateAsync(It.IsAny<SavingsAccount>(), _cancellationToken), Times.Once);
+        _mockSavingsAccountRepository.Verify(r => r.Update(It.IsAny<SavingsAccount>()), Times.Once);
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(_cancellationToken), Times.Once);
 
         Assert.NotNull(response);
@@ -213,12 +212,12 @@ public class TransactionServiceTest
 
         var checkingAccount = (CheckingAccount)_accounts[0];
 
-        _mockBankAccountRepository.Setup(r => r.GetByIdAsync(transactionRequest.AccountId, It.IsAny<CancellationToken>()))
+        _mockBankAccountRepository.Setup(r => r.GetByIdAsync(transactionRequest.AccountId, _cancellationToken))
                                       .ReturnsAsync(checkingAccount);
 
         // Act & Assert
         await Assert.ThrowsAsync<TransactionOverdraftLimitReachedException>(() => _transactionService.CreateAsync(transactionRequest));
-        _mockBankAccountRepository.Verify(r => r.GetByIdAsync(transactionRequest.AccountId, It.IsAny<CancellationToken>()), Times.Once);
+        _mockBankAccountRepository.Verify(r => r.GetByIdAsync(transactionRequest.AccountId, _cancellationToken), Times.Once);
     }
 
     [Fact]
@@ -234,12 +233,12 @@ public class TransactionServiceTest
 
         var savingsAccount = (SavingsAccount)_accounts[1];
 
-        _mockBankAccountRepository.Setup(r => r.GetByIdAsync(transactionRequest.AccountId, It.IsAny<CancellationToken>()))
+        _mockBankAccountRepository.Setup(r => r.GetByIdAsync(transactionRequest.AccountId, _cancellationToken))
                                       .ReturnsAsync(savingsAccount);
 
         // Act & Assert
         await Assert.ThrowsAsync<TransactionDepositLimitReachedException>(() => _transactionService.CreateAsync(transactionRequest));
-        _mockBankAccountRepository.Verify(r => r.GetByIdAsync(transactionRequest.AccountId, It.IsAny<CancellationToken>()), Times.Once);
+        _mockBankAccountRepository.Verify(r => r.GetByIdAsync(transactionRequest.AccountId, _cancellationToken), Times.Once);
     }
 
     [Fact]
@@ -255,12 +254,12 @@ public class TransactionServiceTest
 
         var savingsAccount = (SavingsAccount)_accounts[1];
 
-        _mockBankAccountRepository.Setup(r => r.GetByIdAsync(transactionRequest.AccountId, It.IsAny<CancellationToken>()))
+        _mockBankAccountRepository.Setup(r => r.GetByIdAsync(transactionRequest.AccountId, _cancellationToken))
                                       .ReturnsAsync(savingsAccount);
 
         // Act & Assert
         await Assert.ThrowsAsync<TransactionWithdrawalExceedException>(() => _transactionService.CreateAsync(transactionRequest));
-        _mockBankAccountRepository.Verify(r => r.GetByIdAsync(transactionRequest.AccountId, It.IsAny<CancellationToken>()), Times.Once);
+        _mockBankAccountRepository.Verify(r => r.GetByIdAsync(transactionRequest.AccountId, _cancellationToken), Times.Once);
     }
 
     [Fact]
@@ -279,17 +278,16 @@ public class TransactionServiceTest
     }
 
     [Fact]
-    public async Task GetAllAsync_ShouldReturnAllTransactions()
+    public void GetAll_ShouldReturnAllTransactions()
     {
         // Arrange
-        _mockTransactionRepository.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
-                                  .ReturnsAsync(_transactions);
+        _mockTransactionRepository.Setup(r => r.GetAll()).Returns(_transactions);
 
         // Act
-        var result = await _transactionService.GetAllAsync();
+        var result = _transactionService.GetAll();
 
         // Assert
-        _mockTransactionRepository.Verify(r => r.GetAllAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _mockTransactionRepository.Verify(r => r.GetAll(), Times.Once);
         Assert.Equal(_transactions.Count, result.Count());
     }
 
@@ -299,14 +297,14 @@ public class TransactionServiceTest
         // Arrange
         var transactionId = _transactions[0].Id;
 
-        _mockTransactionRepository.Setup(r => r.GetByIdAsync(transactionId, It.IsAny<CancellationToken>()))
+        _mockTransactionRepository.Setup(r => r.GetByIdAsync(transactionId, _cancellationToken))
                                         .ReturnsAsync(_transactions[0]);
 
         // Act
         var result = await _transactionService.GetByIdAsync(transactionId);
 
         // Assert
-        _mockTransactionRepository.Verify(r => r.GetByIdAsync(transactionId, It.IsAny<CancellationToken>()), Times.Once);
+        _mockTransactionRepository.Verify(r => r.GetByIdAsync(transactionId, _cancellationToken), Times.Once);
         Assert.NotNull(result);
         Assert.Equal(_transactions[0].Id, result.Id);
     }
@@ -317,13 +315,13 @@ public class TransactionServiceTest
         // Arrange
         var accountId = Guid.NewGuid();
 
-        _mockTransactionRepository.Setup(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()))
+        _mockTransactionRepository.Setup(r => r.GetByIdAsync(accountId, _cancellationToken))
                                         .ReturnsAsync((Transaction?)null);
 
         // Act & Assert
         await Assert.ThrowsAsync<TransactionNotFoundException>(() => _transactionService.GetByIdAsync(accountId));
 
-        _mockTransactionRepository.Verify(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()), Times.Once);
+        _mockTransactionRepository.Verify(r => r.GetByIdAsync(accountId, _cancellationToken), Times.Once);
     }
 
     [Fact]
@@ -336,7 +334,7 @@ public class TransactionServiceTest
 
         var savingsAccount = (SavingsAccount)_accounts[1];
 
-        _mockBankAccountRepository.Setup(r => r.GetByIdAsync(accountId, It.IsAny<CancellationToken>()))
+        _mockBankAccountRepository.Setup(r => r.GetByIdAsync(accountId, _cancellationToken))
                                       .ReturnsAsync(savingsAccount);
 
         _mockTransactionRepository.Setup(r => r.GetByCondition(It.IsAny<Expression<Func<Transaction, bool>>>()))
@@ -347,7 +345,7 @@ public class TransactionServiceTest
 
         // Assert
         _mockTransactionRepository.Verify(r => r.GetByCondition(It.IsAny<Expression<Func<Transaction, bool>>>()), Times.Once);
-        Assert.Equal(transactions.Count(), result.Count());
+        Assert.Equal(transactions.Count(), result.Transactions.Count());
     }
 
     [Fact]
@@ -372,7 +370,7 @@ public class TransactionServiceTest
         _mockTransactionRepository.Setup(r => r.GetByCondition(It.IsAny<Expression<Func<Transaction, bool>>>()))
                                   .Returns(transactions);
 
-        _mockBankAccountRepository.Setup(r => r.GetByIdAsync(accountStatementQuery.AccountId, It.IsAny<CancellationToken>()))
+        _mockBankAccountRepository.Setup(r => r.GetByIdAsync(accountStatementQuery.AccountId, _cancellationToken))
                                       .ReturnsAsync(_accounts[0]);
 
         // Act
@@ -380,7 +378,7 @@ public class TransactionServiceTest
 
         // Assert
         _mockTransactionRepository.Verify(r => r.GetByCondition(It.IsAny<Expression<Func<Transaction, bool>>>()), Times.Once);
-        _mockBankAccountRepository.Verify(r => r.GetByIdAsync(accountStatementQuery.AccountId, It.IsAny<CancellationToken>()), Times.Once);
+        _mockBankAccountRepository.Verify(r => r.GetByIdAsync(accountStatementQuery.AccountId, _cancellationToken), Times.Once);
 
         Assert.Equal(_accounts[0].Balance, result.Balance);
         Assert.Equal(transactions.Count(), result.Transactions.Length);
