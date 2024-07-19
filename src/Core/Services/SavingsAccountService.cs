@@ -18,7 +18,7 @@ public sealed class SavingsAccountService(IRepositoryManager repositoryManager) 
 
         await repositoryManager.SavingsAccountRepository.CreateAsync(savingsAccount, cancellationToken).ConfigureAwait(false);
 
-        await repositoryManager.UnitOfWork.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await repositoryManager.UnitOfWork.SaveChangesAsync(cancellationToken);
 
         return savingsAccount.Adapt<SavingsAccountResponse>();
     }
@@ -27,14 +27,14 @@ public sealed class SavingsAccountService(IRepositoryManager repositoryManager) 
     {
         var savingsAccount = await repositoryManager.SavingsAccountRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new AccountNotFoundException(id);
 
-        await repositoryManager.SavingsAccountRepository.DeleteAsync(savingsAccount, cancellationToken).ConfigureAwait(false);
+        repositoryManager.SavingsAccountRepository.Delete(savingsAccount);
 
-        await repositoryManager.UnitOfWork.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await repositoryManager.UnitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<SavingsAccountResponse>> GetAllAsync(CancellationToken cancellationToken = default)
+    public IEnumerable<SavingsAccountResponse> GetAll()
     {
-        var savingsAccounts = await repositoryManager.SavingsAccountRepository.GetAllAsync(cancellationToken).ConfigureAwait(false);
+        var savingsAccounts = repositoryManager.SavingsAccountRepository.GetAll();
 
         return savingsAccounts.Adapt<IEnumerable<SavingsAccountResponse>>();
     }
@@ -54,8 +54,8 @@ public sealed class SavingsAccountService(IRepositoryManager repositoryManager) 
 
         savingsAccountRequest.Adapt(savingsAccount);
 
-        await repositoryManager.SavingsAccountRepository.UpdateAsync(savingsAccount, cancellationToken).ConfigureAwait(false);
+        repositoryManager.SavingsAccountRepository.Update(savingsAccount);
 
-        await repositoryManager.UnitOfWork.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await repositoryManager.UnitOfWork.SaveChangesAsync(cancellationToken);
     }
 }
