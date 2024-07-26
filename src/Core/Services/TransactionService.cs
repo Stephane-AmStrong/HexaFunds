@@ -10,7 +10,13 @@ using Services.Abstractions;
 
 namespace Services;
 
-public sealed class TransactionService(IRepositoryManager repositoryManager) : ITransactionService
+public sealed class TransactionService(
+    ITransactionRepository transactionRepository,
+    ICheckingAccountRepository checkingAccountRepository,
+    ISavingsAccountRepository savingsAccountRepository,
+    IBankAccountRepository bankAccountRepository,
+    IUnitOfWork unitOfWork
+    ) : ITransactionService
 {
     private const string STR_CHECKINGACCOUNT = "Compte Courant";
     private const string STR_SAVINGSACCOUNT = "Livret ";
@@ -19,12 +25,12 @@ public sealed class TransactionService(IRepositoryManager repositoryManager) : I
     {
         CheckTransactionAmount(transactionRequest.Amount);
 
-        var account = await GetAccount(repositoryManager, transactionRequest.AccountId, cancellationToken).ConfigureAwait(false);
+        var account = await GetAccount(transactionRequest.AccountId, cancellationToken).ConfigureAwait(false);
 
         var nextBalance = transactionRequest.Type == TransactionType.Credit ? account.Balance + transactionRequest.Amount : account.Balance - transactionRequest.Amount;
 
+
         var transaction = transactionRequest.Adapt<Transaction>();
-        transaction.Date = DateTime.UtcNow;
 
         if (account is CheckingAccount checkingAccount)
         {
@@ -32,9 +38,11 @@ public sealed class TransactionService(IRepositoryManager repositoryManager) : I
 
             checkingAccount.Balance = nextBalance;
 
-            await repositoryManager.TransactionRepository.CreateAsync(transaction, cancellationToken).ConfigureAwait(false);
 
-            repositoryManager.CheckingAccountRepository.Update(checkingAccount);
+
+            await transactionRepository.CreateAsync(transaction, cancellationToken).ConfigureAwait(false);
+
+            checkingAccountRepository.Update(checkingAccount);
         }
 
         if (account is SavingsAccount savingsAccount)
@@ -45,35 +53,35 @@ public sealed class TransactionService(IRepositoryManager repositoryManager) : I
 
             savingsAccount.Balance = nextBalance;
 
-            await repositoryManager.TransactionRepository.CreateAsync(transaction, cancellationToken).ConfigureAwait(false);
+            await transactionRepository.CreateAsync(transaction, cancellationToken).ConfigureAwait(false);
 
-            repositoryManager.SavingsAccountRepository.Update(savingsAccount);
+            savingsAccountRepository.Update(savingsAccount);
         }
 
-        await repositoryManager.UnitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return transaction.Adapt<TransactionResponse>();
     }
 
     public IEnumerable<TransactionResponse> GetAll()
     {
-        var transactions = repositoryManager.TransactionRepository.GetAll();
+        var transactions = transactionRepository.GetAll();
 
         return transactions.Adapt<IEnumerable<TransactionResponse>>();
     }
 
     public async Task<TransactionResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var transaction = await repositoryManager.TransactionRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new TransactionNotFoundException(id);
+        var transaction = await transactionRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new TransactionNotFoundException(id);
 
         return transaction.Adapt<TransactionResponse>();
     }
 
     public async Task<AccountTransactionsResponse> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken = default)
     {
-        var account = await GetAccount(repositoryManager, accountId, cancellationToken).ConfigureAwait(false);
+        var account = await GetAccount(accountId, cancellationToken).ConfigureAwait(false);
 
-        var transactions = repositoryManager.TransactionRepository.GetByCondition(transaction => transaction.AccountId == accountId)
+        var transactions = transactionRepository.GetByCondition(transaction => transaction.AccountId == accountId)
             .OrderByDescending(t => t.Date);
 
         var accountTransactions = new AccountTransactionsResponse
@@ -89,11 +97,11 @@ public sealed class TransactionService(IRepositoryManager repositoryManager) : I
 
     public async Task<AccountStatementResponse> GetAccountStatementAsync(AccountStatementQuery accountStatementQuery, CancellationToken cancellationToken = default)
     {
-        var account = await GetAccount(repositoryManager, accountStatementQuery.AccountId, cancellationToken).ConfigureAwait(false);
+        var account = await GetAccount(accountStatementQuery.AccountId, cancellationToken).ConfigureAwait(false);
 
         var endOfSlidingMonth = accountStatementQuery.StartOfSlidingMonth.AddDays(30);
 
-        var transactions = repositoryManager.TransactionRepository.GetByCondition(
+        var transactions = transactionRepository.GetByCondition(
             transaction => transaction.AccountId == accountStatementQuery.AccountId
             && transaction.Date >= accountStatementQuery.StartOfSlidingMonth
             && transaction.Date <= endOfSlidingMonth
@@ -106,8 +114,8 @@ public sealed class TransactionService(IRepositoryManager repositoryManager) : I
         return new AccountStatementResponse(accountType, account.Balance, transactionsResponse);
     }
 
-    private static async Task<Domain.Entities.BankAccount> GetAccount(IRepositoryManager repositoryManager, Guid accountId, CancellationToken cancellationToken)
-        => await repositoryManager.BankAccountRepository.GetByIdAsync(accountId, cancellationToken).ConfigureAwait(false) ?? throw new TransactionAccountNotFoundException(accountId);
+    private async Task<Domain.Entities.BankAccount> GetAccount(Guid accountId, CancellationToken cancellationToken)
+        => await bankAccountRepository.GetByIdAsync(accountId, cancellationToken).ConfigureAwait(false) ?? throw new TransactionAccountNotFoundException(accountId);
 
     private readonly Action<float> CheckTransactionAmount = transactionAmount =>
     {

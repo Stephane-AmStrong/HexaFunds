@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities;
 
-public abstract record BankAccount
+public abstract class BankAccount
 {
     public BankAccount()
     {

@@ -12,7 +12,6 @@ namespace WebApi.Test;
 
 public class TransactionsControllerTests
 {
-    private readonly Mock<IServiceManager> _mockServiceManager;
     private readonly Mock<ITransactionService> _mockTransactionService;
     private readonly TransactionsController _controller;
     private readonly TransactionResponse _transactionResponse;
@@ -20,10 +19,8 @@ public class TransactionsControllerTests
 
     public TransactionsControllerTests()
     {
-        _mockServiceManager = new Mock<IServiceManager>();
         _mockTransactionService = new Mock<ITransactionService>();
-        _mockServiceManager.Setup(sm => sm.TransactionService).Returns(_mockTransactionService.Object);
-        _controller = new TransactionsController(_mockServiceManager.Object);
+        _controller = new TransactionsController(_mockTransactionService.Object);
 
         _bankAccount = new BankAccountResponse()
         {

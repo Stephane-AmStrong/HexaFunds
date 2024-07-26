@@ -3,7 +3,7 @@
 using Microsoft.EntityFrameworkCore;
 namespace Persistence.Repository;
 
-internal sealed class BankAccountRepository(BankingDbContext dbContext) : RepositoryBase<Domain.Entities.BankAccount>(dbContext), IBankAccountRepository
+public sealed class BankAccountRepository(BankingDbContext dbContext) : RepositoryBase<Domain.Entities.BankAccount>(dbContext), IBankAccountRepository
 {
     public async Task<Domain.Entities.BankAccount?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {

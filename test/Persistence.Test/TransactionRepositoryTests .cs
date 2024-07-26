@@ -112,14 +112,13 @@ public class TransactionRepositoryTests : IDisposable
     }
 
     [Fact]
-    public async void UpdateAsync_ShouldUpdateTransaction()
+    public async Task UpdateAsync_ShouldUpdateTransaction()
     {
 
         _context.Transactions.Add(_creditTransaction);
         await _context.SaveChangesAsync();
-        var currentDate = DateTime.UtcNow;
 
-        _creditTransaction.Date = currentDate;
+        //_creditTransaction.Date = DateTime.UtcNow;
         _transactionRepository.Update(_creditTransaction);
         await _context.SaveChangesAsync();
 

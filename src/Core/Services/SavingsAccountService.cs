@@ -10,52 +10,55 @@ using Services.Abstractions;
 
 namespace Services;
 
-public sealed class SavingsAccountService(IRepositoryManager repositoryManager) : ISavingsAccountService
+public sealed class SavingsAccountService(ISavingsAccountRepository savingsAccountRepository, IUnitOfWork unitOfWork) : ISavingsAccountService
 {
     public async Task<SavingsAccountResponse> CreateAsync(SavingsAccountRequest savingsAccountRequest, CancellationToken cancellationToken = default)
     {
         var savingsAccount = savingsAccountRequest.Adapt<SavingsAccount>();
 
-        await repositoryManager.SavingsAccountRepository.CreateAsync(savingsAccount, cancellationToken).ConfigureAwait(false);
+        await savingsAccountRepository.CreateAsync(savingsAccount, cancellationToken).ConfigureAwait(false);
 
-        await repositoryManager.UnitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return savingsAccount.Adapt<SavingsAccountResponse>();
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var savingsAccount = await repositoryManager.SavingsAccountRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new AccountNotFoundException(id);
+        var savingsAccount = await savingsAccountRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new AccountNotFoundException(id);
 
-        repositoryManager.SavingsAccountRepository.Delete(savingsAccount);
+        savingsAccountRepository.Delete(savingsAccount);
 
-        await repositoryManager.UnitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
     public IEnumerable<SavingsAccountResponse> GetAll()
     {
-        var savingsAccounts = repositoryManager.SavingsAccountRepository.GetAll();
+        var savingsAccounts = savingsAccountRepository.GetAll();
 
         return savingsAccounts.Adapt<IEnumerable<SavingsAccountResponse>>();
     }
 
     public async Task<SavingsAccountResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var savingsAccount = await repositoryManager.SavingsAccountRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new AccountNotFoundException(id);
+        var savingsAccount = await savingsAccountRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new AccountNotFoundException(id);
 
         return savingsAccount.Adapt<SavingsAccountResponse>();
     }
 
     public async Task UpdateAsync(Guid id, SavingsAccountRequest savingsAccountRequest, CancellationToken cancellationToken = default)
     {
-        var savingsAccount = await repositoryManager.SavingsAccountRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new AccountNotFoundException(id);
+        var savingsAccount = await savingsAccountRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new AccountNotFoundException(id);
 
-        savingsAccountRequest.Balance = savingsAccount.Balance;
+        savingsAccountRequest = savingsAccountRequest with
+        {
+            Balance = savingsAccount.Balance
+        };
 
         savingsAccountRequest.Adapt(savingsAccount);
 
-        repositoryManager.SavingsAccountRepository.Update(savingsAccount);
+        savingsAccountRepository.Update(savingsAccount);
 
-        await repositoryManager.UnitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

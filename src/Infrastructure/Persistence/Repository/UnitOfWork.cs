@@ -2,7 +2,7 @@
 
 namespace Persistence.Repository;
 
-internal sealed class UnitOfWork(BankingDbContext dbContext) : IUnitOfWork
+public sealed class UnitOfWork(BankingDbContext dbContext) : IUnitOfWork
 {
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken) => dbContext.SaveChangesAsync(cancellationToken);
 }

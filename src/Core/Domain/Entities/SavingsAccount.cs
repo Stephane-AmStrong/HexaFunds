@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities;
 
-public record SavingsAccount : BankAccount
+public class SavingsAccount : BankAccount
 {
     public float BalanceCeiling { get; init; }
 }

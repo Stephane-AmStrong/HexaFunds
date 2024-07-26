@@ -10,7 +10,7 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
 {
     protected RepositoryBase(BankingDbContext dbContext) => BankingDbContext = dbContext;
 
-    protected BankingDbContext BankingDbContext { get; set; }
+    protected BankingDbContext BankingDbContext { get; init; }
 
     public Task BaseCreateAsync(T entity, CancellationToken cancellationToken)
     {

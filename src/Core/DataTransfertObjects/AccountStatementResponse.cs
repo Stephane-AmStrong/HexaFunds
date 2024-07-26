@@ -1,5 +1,3 @@
-﻿using System;
-
-namespace DataTransfertObjects;
+﻿namespace DataTransfertObjects;
 
 public record AccountStatementResponse(string AccountType, float Balance, AccountStatementTransactionResponse[] Transactions);

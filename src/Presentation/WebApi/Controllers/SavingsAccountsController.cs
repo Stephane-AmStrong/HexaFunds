@@ -8,12 +8,12 @@ namespace WebApplicationDocker.Controllers;
 
 [ApiController]
 [Route("api/savingsaccounts")]
-public class SavingsAccountsController(IServiceManager serviceManager) : ControllerBase
+public class SavingsAccountsController(ISavingsAccountService savingsAccountService) : ControllerBase
 {
     [HttpGet]
     public ActionResult<IEnumerable<SavingsAccountResponse>> Get()
     {
-        var savingsAccountsResponse = serviceManager.SavingsAccountService.GetAll();
+        var savingsAccountsResponse = savingsAccountService.GetAll();
 
         return Ok(savingsAccountsResponse);
     }
@@ -21,7 +21,7 @@ public class SavingsAccountsController(IServiceManager serviceManager) : Control
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
     {
-        var savingsAccountResponse = await serviceManager.SavingsAccountService.GetByIdAsync(id, cancellationToken);
+        var savingsAccountResponse = await savingsAccountService.GetByIdAsync(id, cancellationToken);
 
         return Ok(savingsAccountResponse);
     }
@@ -29,7 +29,7 @@ public class SavingsAccountsController(IServiceManager serviceManager) : Control
     [HttpPost]
     public async Task<ActionResult<SavingsAccountResponse>> Post([FromBody] SavingsAccountRequest savingsAccountRequest, CancellationToken cancellationToken)
     {
-        var response = await serviceManager.SavingsAccountService.CreateAsync(savingsAccountRequest, cancellationToken);
+        var response = await savingsAccountService.CreateAsync(savingsAccountRequest, cancellationToken);
 
         return CreatedAtAction(nameof(Get), new { id = response.Id }, response);
     }
@@ -37,7 +37,7 @@ public class SavingsAccountsController(IServiceManager serviceManager) : Control
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        await serviceManager.SavingsAccountService.DeleteAsync(id, cancellationToken);
+        await savingsAccountService.DeleteAsync(id, cancellationToken);
 
         return NoContent();
     }
@@ -45,7 +45,7 @@ public class SavingsAccountsController(IServiceManager serviceManager) : Control
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Put(Guid id, [FromBody] SavingsAccountRequest savingsAccountRequest, CancellationToken cancellationToken)
     {
-        await serviceManager.SavingsAccountService.UpdateAsync(id, savingsAccountRequest, cancellationToken);
+        await savingsAccountService.UpdateAsync(id, savingsAccountRequest, cancellationToken);
 
         return NoContent();
     }

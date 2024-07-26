@@ -14,7 +14,6 @@ namespace WebApi.Test;
 
 public class CheckingAccountsControllerTests
 {
-    private readonly Mock<IServiceManager> _mockServiceManager;
     private readonly Mock<ICheckingAccountService> _mockCheckingAccountService;
     private readonly CheckingAccountsController _controller;
     private readonly CancellationToken _cancellationToken;
@@ -25,10 +24,8 @@ public class CheckingAccountsControllerTests
     public CheckingAccountsControllerTests()
     {
         _cancellationToken = new CancellationToken();
-        _mockServiceManager = new Mock<IServiceManager>();
         _mockCheckingAccountService = new Mock<ICheckingAccountService>();
-        _mockServiceManager.Setup(sm => sm.CheckingAccountService).Returns(_mockCheckingAccountService.Object);
-        _controller = new CheckingAccountsController(_mockServiceManager.Object);
+        _controller = new CheckingAccountsController(_mockCheckingAccountService.Object);
 
         _checkingAccountRequest = new CheckingAccountRequest { AccountNumber = "12345", OverdraftLimit = 500 };
         _checkingAccountResponse = new CheckingAccountResponse { Id = Guid.NewGuid(), AccountNumber = "12345", OverdraftLimit = 500 };

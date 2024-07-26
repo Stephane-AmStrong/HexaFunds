@@ -12,7 +12,6 @@ namespace WebApi.Test;
 
 public class SavingsAccountsControllerTests
 {
-    private readonly Mock<IServiceManager> _mockServiceManager;
     private readonly Mock<ISavingsAccountService> _mockSavingsAccountService;
     private readonly SavingsAccountsController _controller;
     private readonly CancellationToken _cancellationToken;
@@ -23,10 +22,8 @@ public class SavingsAccountsControllerTests
     public SavingsAccountsControllerTests()
     {
         _cancellationToken = new CancellationToken();
-        _mockServiceManager = new Mock<IServiceManager>();
         _mockSavingsAccountService = new Mock<ISavingsAccountService>();
-        _mockServiceManager.Setup(sm => sm.SavingsAccountService).Returns(_mockSavingsAccountService.Object);
-        _controller = new SavingsAccountsController(_mockServiceManager.Object);
+        _controller = new SavingsAccountsController(_mockSavingsAccountService.Object);
 
         _savingsAccountRequest = new SavingsAccountRequest { AccountNumber = "12345", BalanceCeiling = 500 };
         _savingsAccountResponse = new SavingsAccountResponse { Id = Guid.NewGuid(), AccountNumber = "12345", BalanceCeiling = 500 };

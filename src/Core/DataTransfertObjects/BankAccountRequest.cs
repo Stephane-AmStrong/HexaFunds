@@ -2,9 +2,9 @@
 
 namespace DataTransfertObjects;
 
-public record BankAccountRequest
+public abstract record BankAccountRequest
 {
     public required string AccountNumber { get; init; }
-    [JsonIgnore] 
-    public float Balance { get; set; }
+    [JsonIgnore]
+    public float Balance { get; init; }
 }

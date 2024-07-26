@@ -10,52 +10,55 @@ using Services.Abstractions;
 
 namespace Services;
 
-public sealed class CheckingAccountService(IRepositoryManager repositoryManager) : ICheckingAccountService
+public sealed class CheckingAccountService(ICheckingAccountRepository checkingAccountRepository, IUnitOfWork unitOfWork) : ICheckingAccountService
 {
     public async Task<CheckingAccountResponse> CreateAsync(CheckingAccountRequest checkingAccountRequest, CancellationToken cancellationToken)
     {
         var checkingAccount = checkingAccountRequest.Adapt<CheckingAccount>();
 
-        await repositoryManager.CheckingAccountRepository.CreateAsync(checkingAccount, cancellationToken).ConfigureAwait(false);
+        await checkingAccountRepository.CreateAsync(checkingAccount, cancellationToken).ConfigureAwait(false);
 
-        await repositoryManager.UnitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return checkingAccount.Adapt<CheckingAccountResponse>();
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        var checkingAccount = await repositoryManager.CheckingAccountRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new AccountNotFoundException(id);
+        var checkingAccount = await checkingAccountRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new AccountNotFoundException(id);
 
-        repositoryManager.CheckingAccountRepository.Delete(checkingAccount);
+        checkingAccountRepository.Delete(checkingAccount);
 
-        await repositoryManager.UnitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
     public IEnumerable<CheckingAccountResponse> GetAll()
     {
-        var checkingAccounts = repositoryManager.CheckingAccountRepository.GetAll();
+        var checkingAccounts = checkingAccountRepository.GetAll();
 
         return checkingAccounts.Adapt<IEnumerable<CheckingAccountResponse>>();
     }
 
     public async Task<CheckingAccountResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var checkingAccount = await repositoryManager.CheckingAccountRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new AccountNotFoundException(id);
+        var checkingAccount = await checkingAccountRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new AccountNotFoundException(id);
 
         return checkingAccount.Adapt<CheckingAccountResponse>();
     }
 
     public async Task UpdateAsync(Guid id, CheckingAccountRequest checkingAccountRequest, CancellationToken cancellationToken)
     {
-        var checkingAccount = await repositoryManager.CheckingAccountRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new AccountNotFoundException(id);
+        var checkingAccount = await checkingAccountRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new AccountNotFoundException(id);
 
-        checkingAccountRequest.Balance = checkingAccount.Balance;
+        checkingAccountRequest = checkingAccountRequest with
+        {
+            Balance = checkingAccount.Balance
+        };
 
         checkingAccountRequest.Adapt(checkingAccount);
 
-        repositoryManager.CheckingAccountRepository.Update(checkingAccount);
+        checkingAccountRepository.Update(checkingAccount);
 
-        await repositoryManager.UnitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

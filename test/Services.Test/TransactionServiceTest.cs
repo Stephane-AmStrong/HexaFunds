@@ -13,7 +13,6 @@ namespace Service.Test;
 
 public class TransactionServiceTest
 {
-    private readonly Mock<IRepositoryManager> _mockRepositoryManager;
     private readonly Mock<ITransactionRepository> _mockTransactionRepository;
     private readonly Mock<ICheckingAccountRepository> _mockCheckingAccountRepository;
     private readonly Mock<ISavingsAccountRepository> _mockSavingsAccountRepository;
@@ -27,7 +26,6 @@ public class TransactionServiceTest
 
     public TransactionServiceTest()
     {
-        _mockRepositoryManager = new Mock<IRepositoryManager>();
         _mockTransactionRepository = new Mock<ITransactionRepository>();
         _mockCheckingAccountRepository = new Mock<ICheckingAccountRepository>();
         _mockSavingsAccountRepository = new Mock<ISavingsAccountRepository>();
@@ -35,13 +33,14 @@ public class TransactionServiceTest
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _cancellationToken = It.IsAny<CancellationToken>();
 
-        _mockRepositoryManager.Setup(r => r.TransactionRepository).Returns(_mockTransactionRepository.Object);
-        _mockRepositoryManager.Setup(r => r.CheckingAccountRepository).Returns(_mockCheckingAccountRepository.Object);
-        _mockRepositoryManager.Setup(r => r.SavingsAccountRepository).Returns(_mockSavingsAccountRepository.Object);
-        _mockRepositoryManager.Setup(r => r.BankAccountRepository).Returns(_mockBankAccountRepository.Object);
-        _mockRepositoryManager.Setup(r => r.UnitOfWork).Returns(_mockUnitOfWork.Object);
-
-        _transactionService = new TransactionService(_mockRepositoryManager.Object);
+        _transactionService = new TransactionService
+        (
+            _mockTransactionRepository.Object,
+            _mockCheckingAccountRepository.Object,
+            _mockSavingsAccountRepository.Object,
+            _mockBankAccountRepository.Object,
+            _mockUnitOfWork.Object
+        );
 
         _accounts =
         [
@@ -385,6 +384,4 @@ public class TransactionServiceTest
         Assert.Equal(_transactions[4].Id, result.Transactions[0].Id);
         Assert.Equal(_transactions[0].Id, result.Transactions[1].Id);
     }
-
-
 }
