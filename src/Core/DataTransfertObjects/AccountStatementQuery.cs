@@ -1,5 +1,3 @@
-﻿using System;
-
-namespace DataTransfertObjects;
+﻿namespace DataTransfertObjects;
 
 public record AccountStatementQuery(Guid AccountId, DateTime StartOfSlidingMonth);
