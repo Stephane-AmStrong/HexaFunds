@@ -11,7 +11,6 @@ namespace Service.Test;
 
 public class SavingsAccountServiceTest
 {
-    private readonly Mock<IRepositoryManager> _mockRepositoryManager;
     private readonly Mock<ISavingsAccountRepository> _mockSavingsAccountRepository;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly SavingsAccountService _savingsAccountService;
@@ -21,14 +20,11 @@ public class SavingsAccountServiceTest
     public SavingsAccountServiceTest()
     {
         _cancellationToken = new CancellationToken();
-        _mockRepositoryManager = new Mock<IRepositoryManager>();
         _mockSavingsAccountRepository = new Mock<ISavingsAccountRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        _mockRepositoryManager.Setup(r => r.SavingsAccountRepository).Returns(_mockSavingsAccountRepository.Object);
-        _mockRepositoryManager.Setup(r => r.UnitOfWork).Returns(_mockUnitOfWork.Object);
 
-        _savingsAccountService = new SavingsAccountService(_mockRepositoryManager.Object);
+        _savingsAccountService = new SavingsAccountService(_mockSavingsAccountRepository.Object, _mockUnitOfWork.Object);
 
         _savingsAccounts =
         [

@@ -11,7 +11,6 @@ namespace Service.Test;
 
 public class CheckingAccountServiceTest
 {
-    private readonly Mock<IRepositoryManager> _mockRepositoryManager;
     private readonly Mock<ICheckingAccountRepository> _mockCheckingAccountRepository;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly CheckingAccountService _checkingAccountService;
@@ -21,14 +20,10 @@ public class CheckingAccountServiceTest
     public CheckingAccountServiceTest()
     {
         _cancellationToken = new CancellationToken();
-        _mockRepositoryManager = new Mock<IRepositoryManager>();
         _mockCheckingAccountRepository = new Mock<ICheckingAccountRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        _mockRepositoryManager.Setup(r => r.CheckingAccountRepository).Returns(_mockCheckingAccountRepository.Object);
-        _mockRepositoryManager.Setup(r => r.UnitOfWork).Returns(_mockUnitOfWork.Object);
-
-        _checkingAccountService = new CheckingAccountService(_mockRepositoryManager.Object);
+        _checkingAccountService = new CheckingAccountService(_mockCheckingAccountRepository.Object, _mockUnitOfWork.Object);
 
         _checkingAccounts =
         [
