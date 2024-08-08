@@ -13,6 +13,8 @@ using Services.Abstractions;
 
 using WebApi.Middleware;
 
+using WebApplicationDocker.Controllers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -64,6 +66,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapCheckingAccountsEndpoints();
+app.MapSavingsAccountsEndpoints();
+app.MapTransactionsEndpoints();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 

@@ -13,23 +13,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{C70BC887-580C-493E-B76A-D20B24B71AE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence.Test", "test\Persistence.Test\Persistence.Test.csproj", "{9C23ACA8-4A6B-4313-95C6-D47D050811F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence.Test", "test\Persistence.Test\Persistence.Test.csproj", "{9C23ACA8-4A6B-4313-95C6-D47D050811F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Test", "test\Services.Test\Services.Test.csproj", "{B275805E-C0A8-4281-96E1-1604CE29AD77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Test", "test\Services.Test\Services.Test.csproj", "{B275805E-C0A8-4281-96E1-1604CE29AD77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.Test", "test\WebApi.Test\WebApi.Test.csproj", "{A602C9E1-4D5A-4733-B76C-F34D1E43CF73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTransfertObjects", "src\Core\DataTransfertObjects\DataTransfertObjects.csproj", "{A69CB873-D986-4034-B416-990F4F2AF055}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTransfertObjects", "src\Core\DataTransfertObjects\DataTransfertObjects.csproj", "{A69CB873-D986-4034-B416-990F4F2AF055}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "src\Core\Domain\Domain.csproj", "{6B116790-4751-444B-9094-5D7C47DD61B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\Core\Domain\Domain.csproj", "{6B116790-4751-444B-9094-5D7C47DD61B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "src\Core\Services\Services.csproj", "{7AE7EB93-DD42-4D8B-80F0-0E0DF82C46E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "src\Core\Services\Services.csproj", "{7AE7EB93-DD42-4D8B-80F0-0E0DF82C46E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Abstractions", "src\Core\Services.Abstractions\Services.Abstractions.csproj", "{48F48293-68FE-4E39-AC95-D21613A3FAE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Abstractions", "src\Core\Services.Abstractions\Services.Abstractions.csproj", "{48F48293-68FE-4E39-AC95-D21613A3FAE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "src\Infrastructure\Persistence\Persistence.csproj", "{3159D478-E462-4D7C-B04C-0BDBF8D5E9F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "src\Infrastructure\Persistence\Persistence.csproj", "{3159D478-E462-4D7C-B04C-0BDBF8D5E9F7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "src\Presentation\WebApi\WebApi.csproj", "{C710273E-DBF6-433E-B253-09EEDD55F32F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "src\Presentation\WebApi\WebApi.csproj", "{C710273E-DBF6-433E-B253-09EEDD55F32F}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{FAEA3B34-4227-429C-85DD-447957F23DDE}"
 EndProject
@@ -47,10 +45,6 @@ Global
 		{B275805E-C0A8-4281-96E1-1604CE29AD77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B275805E-C0A8-4281-96E1-1604CE29AD77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B275805E-C0A8-4281-96E1-1604CE29AD77}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A602C9E1-4D5A-4733-B76C-F34D1E43CF73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A602C9E1-4D5A-4733-B76C-F34D1E43CF73}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A602C9E1-4D5A-4733-B76C-F34D1E43CF73}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A602C9E1-4D5A-4733-B76C-F34D1E43CF73}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A69CB873-D986-4034-B416-990F4F2AF055}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A69CB873-D986-4034-B416-990F4F2AF055}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A69CB873-D986-4034-B416-990F4F2AF055}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -89,7 +83,6 @@ Global
 		{C70BC887-580C-493E-B76A-D20B24B71AE4} = {9EE1B646-9F42-45E1-ADAC-4343D72DB4B9}
 		{9C23ACA8-4A6B-4313-95C6-D47D050811F4} = {F6C873BE-8693-4C9D-8B2D-2F6E8E3F3511}
 		{B275805E-C0A8-4281-96E1-1604CE29AD77} = {F6C873BE-8693-4C9D-8B2D-2F6E8E3F3511}
-		{A602C9E1-4D5A-4733-B76C-F34D1E43CF73} = {F6C873BE-8693-4C9D-8B2D-2F6E8E3F3511}
 		{A69CB873-D986-4034-B416-990F4F2AF055} = {3961E6B8-7C4D-457F-AB77-A46D589ABC1B}
 		{6B116790-4751-444B-9094-5D7C47DD61B9} = {3961E6B8-7C4D-457F-AB77-A46D589ABC1B}
 		{7AE7EB93-DD42-4D8B-80F0-0E0DF82C46E1} = {3961E6B8-7C4D-457F-AB77-A46D589ABC1B}
