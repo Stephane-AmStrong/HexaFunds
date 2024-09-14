@@ -1,0 +1,36 @@
+services:
+  hexafunds.api:
+    build:
+      context: HexaBack/
+      dockerfile: src/Presentation/WebApi/Dockerfile
+      target: final
+    ports:
+      - 5000:80
+      # - 5001:443
+    depends_on:
+      hexafunds.db: 
+        condition: service_healthy
+  hexafunds.db:
+    user: postgres
+    image: postgres:12.20-alpine3.20
+    container_name: hexafunds_db
+    secrets:
+      - db-password
+    volumes:
+        - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=hexafunds
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    ports:
+        - 5432:5432
+volumes:
+  db-data:
+secrets:
+  db-password:
+    file: db/password.txt
