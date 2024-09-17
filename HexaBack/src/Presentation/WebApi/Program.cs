@@ -17,7 +17,11 @@ builder.Services.ConfigureBankingRepositories();
 builder.Services.ConfigureBankingServices();
 builder.Services.ConfigureGlobalExceptionHandling();
 
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
+
+app.MapHealthChecks("/health");
 
 app.ApplyMigrationsIfNotTesting();
 
