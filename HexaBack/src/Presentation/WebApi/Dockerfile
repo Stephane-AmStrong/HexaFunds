@@ -20,17 +20,24 @@ RUN dotnet publish "WebApi.csproj" -c $BUILD_CONFIGURATION --use-current-runtime
 
 # Etape finale avec l'image ASP.NET
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS final
+
+# Installer curl pour les healthchecks
+RUN apk add --no-cache curl
+
 WORKDIR /app
 
 # Sécurité : définir un utilisateur non-root
+ARG APP_UID=1001
 USER $APP_UID
 
 # Copie des fichiers publiés dans l'image finale
 COPY --chown=$APP_UID:$APP_UID --from=publish /app/publish .
 
+# Copie du certificat PFX avec les bonnes permissions
+COPY --chown=$APP_UID:$APP_UID /src/Presentation/WebApi/https/aspnetapp.pfx /app/https/aspnetapp.pfx
 
 # Appliquer les migrations avant de démarrer l'application
-# RUN dotnet ef database update --project .\src\Infrastructure\Persistence\ --startup-project .\src\Presentation\WebApi\  --no-build
+# RUN dotnet ef database update --project .\src\Infrastructure\Persistence\ --startup-project .\src\Presentat
 
 # Exposition des ports
 EXPOSE 80
