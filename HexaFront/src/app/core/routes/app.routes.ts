@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { AddressFormComponent } from '../../address-form/address-form.component';
+import { AddressFormComponent } from '../../features/banking/Components/address-form/address-form.component';
 import { DashboardComponent } from '../../features/banking/Components/dashboard/dashboard.component';
 import { DragDropComponent } from '../../features/banking/Components/drag-drop/drag-drop.component';
 import { PageNotFoundComponent } from '../../shared/Components/page-not-found/page-not-found.component';
-import { TreeComponent } from '../../features/tree/tree.component';
+import { TreeComponent } from '../../features/banking/Components/tree/tree.component';
 
 export const routes: Routes = [
     {
