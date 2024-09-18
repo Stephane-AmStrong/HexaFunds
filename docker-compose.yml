@@ -1,4 +1,16 @@
 services:
+  hexafunds.front:
+    build:
+      context: HexaFront/
+      dockerfile: Dockerfile
+    ports:
+      - 4200:4200 
+    depends_on:
+      - hexafunds.api
+    volumes:
+      - ./HexaFront:/project
+      - /project/node_modules
+      
   hexafunds.api:
     build:
       context: HexaBack/
