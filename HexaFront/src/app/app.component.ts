@@ -1,12 +1,12 @@
 import { Component, HostBinding, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { TemplateComponent } from './shared/Components/template/template.component';
 import { ThemeService } from './shared/services/theme.service';
+import { LayoutComponent } from "./shared/Components/layout/layout.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, TemplateComponent],
+  imports: [RouterOutlet, LayoutComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
