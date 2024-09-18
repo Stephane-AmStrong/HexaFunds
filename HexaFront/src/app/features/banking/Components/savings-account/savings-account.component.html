@@ -1,0 +1,7 @@
+<mat-grid-list cols="5" rowHeight="350px">
+    @for (card of cards; track card) {
+    <mat-grid-tile>
+        <account-card [cardTitle]="card.title" />
+    </mat-grid-tile>
+    }
+</mat-grid-list>

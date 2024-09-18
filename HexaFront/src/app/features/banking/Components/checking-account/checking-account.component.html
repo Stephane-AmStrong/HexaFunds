@@ -1,0 +1,10 @@
+<div class="grid-container">
+    <h1 class="mat-h1">Dashboard</h1>
+    <mat-grid-list cols="5" rowHeight="350px">
+        @for ( checkingAccount of checkingAccounts(); track checkingAccount.id) {
+        <mat-grid-tile>
+            <account-card [cardTitle]=" checkingAccount.accountNumber" />
+        </mat-grid-tile>
+        }
+    </mat-grid-list>
+</div>
