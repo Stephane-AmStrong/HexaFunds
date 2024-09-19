@@ -6,12 +6,37 @@
     bottom: 15px;
 }
 
-.more-button {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-}
-
 .account-card-content {
     text-align: center;
+}
+
+.minimal-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.align-right {
+    margin-left: auto;
+    text-align: right;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    justify-content: space-between;
+}
+
+.balance-bar {
+    height: 8px;
+    background-color: #4caf50;
+    margin-top: 4px;
+}
+
+mat-icon {
+    margin-right: 12px;
+}
+
+mat-card {
+    margin: 16px;
 }
