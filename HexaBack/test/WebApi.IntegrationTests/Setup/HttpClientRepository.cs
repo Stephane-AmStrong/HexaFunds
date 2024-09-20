@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace WebApi.IntegrationTests.Setup;
 
@@ -28,6 +29,23 @@ public class HttpClientRepository
         return await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
     }
 
+    public async Task<HttpResponseMessage> Get<TQuery>(TQuery query)
+    {
+        Dictionary<string, string> queryParams;
+
+        if (query is not null)
+        {
+            queryParams = typeof(TQuery).GetProperties().Where(x => x.GetValue(query) is not null).Select(prop => new KeyValuePair<string, string>(prop.Name, prop.GetValue(query)?.ToString()!)).ToDictionary(prop => prop.Key, kvp => kvp.Value);
+            var queryBuilder = new QueryBuilder(queryParams);
+
+            RequestUri = Path.Combine(RequestUri, queryBuilder.ToString());
+        }
+
+        var request = new HttpRequestMessage(HttpMethod.Get, RequestUri);
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        return await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+    }
 
     public async Task<HttpResponseMessage> GetById<TResponse>(Guid id) where TResponse : class
     {

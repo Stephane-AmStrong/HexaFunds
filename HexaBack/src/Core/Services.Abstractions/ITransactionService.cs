@@ -4,9 +4,7 @@ namespace Services.Abstractions;
 
 public interface ITransactionService
 {
-    IList<TransactionResponse> GetAll();
-    Task<AccountStatementResponse> GetAccountStatementAsync(AccountStatementQuery accountStatementQuery, CancellationToken cancellationToken);
+    IList<TransactionResponse> Get(TransactionQuery transactionQuery);
     Task<TransactionResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
-    Task<AccountTransactionsResponse> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken);
     Task<TransactionResponse> CreateAsync(TransactionRequest transaction, CancellationToken cancellationToken);
 }

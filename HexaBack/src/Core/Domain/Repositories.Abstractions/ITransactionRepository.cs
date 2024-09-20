@@ -6,7 +6,7 @@ namespace Domain.Repositories.Abstractions;
 
 public interface ITransactionRepository
 {
-    IList<Transaction> GetAll();
+    IQueryable<Transaction> GetAll();
     IQueryable<Transaction> GetByCondition(Expression<Func<Transaction, bool>> expression);
     Task<Transaction?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task CreateAsync(Transaction transaction, CancellationToken cancellationToken);

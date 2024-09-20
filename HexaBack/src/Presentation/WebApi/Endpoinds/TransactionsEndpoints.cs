@@ -19,17 +19,6 @@ public static class TransactionsEndpoints
             .Produces<TransactionResponse>()
             .Produces(StatusCodes.Status200OK);
 
-        group.MapGet("/statement", GetAccountStatement)
-            //.WithName("statement")
-            .Produces<AccountTransactionsResponse>()
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status404NotFound);
-
-        group.MapGet("account/{accountId:guid}", GetByAccountId)
-            .Produces<AccountTransactionsResponse>()
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound);
-
         group.MapPost("/", CreateTransaction)
             .Produces<TransactionResponse>(StatusCodes.Status201Created)
             .ProducesValidationProblem()
@@ -37,24 +26,10 @@ public static class TransactionsEndpoints
     }
 
     // GET /api/transactions
-    private static IResult GetAllTransactions(ITransactionService transactionService)
+    private static IResult GetAllTransactions(ITransactionService transactionService, [AsParameters] TransactionQuery transactionQuery)
     {
-        var transactionsResponse = transactionService.GetAll();
+        var transactionsResponse = transactionService.Get(transactionQuery);
         return Results.Ok(transactionsResponse);
-    }
-
-    // GET /api/transactions/statement
-    private static async Task<IResult> GetAccountStatement(ITransactionService transactionService, [AsParameters] AccountStatementQuery accountStatementQuery, CancellationToken cancellationToken)
-    {
-        var transactionResponse = await transactionService.GetAccountStatementAsync(accountStatementQuery, cancellationToken);
-        return Results.Ok(transactionResponse);
-    }
-
-    // GET /api/transactions/account/{accountId:guid}
-    private static async Task<IResult> GetByAccountId(ITransactionService transactionService, Guid accountId, CancellationToken cancellationToken)
-    {
-        var transactionAccountsResponse = await transactionService.GetByAccountIdAsync(accountId, cancellationToken);
-        return Results.Ok(transactionAccountsResponse);
     }
 
     // GET /api/transactions/{id:guid}

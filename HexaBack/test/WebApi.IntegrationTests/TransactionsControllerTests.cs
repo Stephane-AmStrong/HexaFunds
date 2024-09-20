@@ -53,7 +53,7 @@ public class TransactionsControllerTests : IClassFixture<IntegrationTestWebFacto
         // Arrange
 
         // Act
-        using var httpMessage = await _httpClientRepository.Get();
+        using var httpMessage = await _httpClientRepository.Get(new TransactionQuery());
 
         // Assert
         Assert.NotNull(httpMessage);
@@ -135,28 +135,6 @@ public class TransactionsControllerTests : IClassFixture<IntegrationTestWebFacto
         //Assert
         Assert.NotNull(httpMessage);
         Assert.Equal(HttpStatusCode.BadRequest, httpMessage.StatusCode);
-    }
-
-    [Fact]
-    public async Task GetTransactionsByAccountId_ReturnsAccountTransactionsResponse_WhenAccountIdExists()
-    {
-        //Arrange
-        _httpClientRepository.RequestUri = $"{_requestUri}/account";
-        //var idTransaction = _transactions.First();
-
-        //Act
-        using var httpMessage = await _httpClientRepository.GetById<AccountTransactionsResponse>(_accountId);
-
-        //Assert
-        Assert.NotNull(httpMessage);
-        Assert.Equal(HttpStatusCode.OK, httpMessage.StatusCode);
-
-        var accountTransactionResponse = await _httpClientRepository.DeserializeAsync<AccountTransactionsResponse>(httpMessage);
-
-        Assert.NotNull(_checkingAccount);
-        Assert.Equal(_checkingAccount.Balance, accountTransactionResponse.CheckingAccount?.Balance);
-        Assert.Equal(_checkingAccount.AccountNumber, accountTransactionResponse.CheckingAccount?.AccountNumber);
-        Assert.Equal(_checkingAccount.Transactions.Count(), accountTransactionResponse.Transactions.Count());
     }
 
     private async Task SeedDbWithTransactionsAsync(BankingDbContext dbContext)
