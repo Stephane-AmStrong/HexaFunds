@@ -62,9 +62,24 @@ public sealed class TransactionService(
         return transaction.Adapt<TransactionResponse>();
     }
 
-    public IList<TransactionResponse> GetAll()
+    public IList<TransactionResponse> Get(TransactionQuery transactionQuery)
     {
         var transactions = transactionRepository.GetAll();
+
+        if (transactionQuery.WithAccountId is not null)
+        {
+            transactions = transactions.Where(x => x.AccountId == transactionQuery.WithAccountId);
+        }
+
+        if (transactionQuery.FromDate is not null)
+        {
+            transactions = transactions.Where(x => x.Date >= transactionQuery.FromDate);
+        }
+
+        if (transactionQuery.ToDate is not null)
+        {
+            transactions = transactions.Where(x => x.Date <= transactionQuery.ToDate);
+        }
 
         return transactions.Adapt<IList<TransactionResponse>>();
     }
@@ -74,43 +89,6 @@ public sealed class TransactionService(
         var transaction = await transactionRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new TransactionNotFoundException(id);
 
         return transaction.Adapt<TransactionResponse>();
-    }
-
-    public async Task<AccountTransactionsResponse> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken = default)
-    {
-        var account = await GetAccount(accountId, cancellationToken).ConfigureAwait(false);
-
-        var transactions = transactionRepository.GetByCondition(transaction => transaction.AccountId == accountId)
-            .OrderByDescending(t => t.Date);
-
-        var accountTransactions = new AccountTransactionsResponse
-        {
-            CheckingAccount = account is CheckingAccount checkingAccount ? checkingAccount.Adapt<CheckingAccountResponse>() : null,
-            SavingsAccount = account is SavingsAccount savingsAccount ? savingsAccount.Adapt<SavingsAccountResponse>() : null,
-            Transactions = transactions.Adapt<IList<TransactionResponse>>()
-        };
-
-        return accountTransactions;
-    }
-
-
-    public async Task<AccountStatementResponse> GetAccountStatementAsync(AccountStatementQuery accountStatementQuery, CancellationToken cancellationToken = default)
-    {
-        var account = await GetAccount(accountStatementQuery.AccountId, cancellationToken).ConfigureAwait(false);
-
-        var endOfSlidingMonth = accountStatementQuery.StartOfSlidingMonth.AddDays(30);
-
-        var transactions = transactionRepository.GetByCondition(
-            transaction => transaction.AccountId == accountStatementQuery.AccountId
-            && transaction.Date >= accountStatementQuery.StartOfSlidingMonth
-            && transaction.Date <= endOfSlidingMonth
-        ).OrderByDescending(t => t.Date);
-
-        var transactionsResponse = transactions.Adapt<TransactionResponse[]>();
-
-        var accountType = GetAccountType(account);
-
-        return new AccountStatementResponse(accountType, account.Balance, transactionsResponse);
     }
 
     private async Task<Domain.Entities.BankAccount> GetAccount(Guid accountId, CancellationToken cancellationToken)

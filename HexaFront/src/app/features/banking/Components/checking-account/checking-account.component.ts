@@ -4,16 +4,16 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CheckingAccountResponse } from '../../models/checking-account-response';
 import { CheckingAccountService } from '../../services/checking-account.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'checking-account',
   standalone: true,
-  imports: [AccountCardComponent, MatGridListModule],
+  imports: [AccountCardComponent, MatGridListModule, RouterLink],
   templateUrl: './checking-account.component.html',
   styleUrl: './checking-account.component.scss',
 })
 export class CheckingAccountComponent {
-
   private checkingAccountService = inject(CheckingAccountService);
 
   checkingAccounts = toSignal<

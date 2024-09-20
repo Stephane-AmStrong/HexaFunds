@@ -277,17 +277,84 @@ public class TransactionServiceTest
     }
 
     [Fact]
-    public void GetAll_ShouldReturnAllTransactions()
+    public void Get_ShouldReturnAllTransactions_WhenNoFiltersAreApplied()
     {
         // Arrange
-        _mockTransactionRepository.Setup(r => r.GetAll()).Returns(_transactions);
+        _mockTransactionRepository.Setup(r => r.GetAll()).Returns(_transactions.AsQueryable());
 
         // Act
-        var result = _transactionService.GetAll();
+        var result = _transactionService.Get(new TransactionQuery());
 
         // Assert
         _mockTransactionRepository.Verify(r => r.GetAll(), Times.Once);
         Assert.Equal(_transactions.Count, result.Count());
+    }
+
+
+    [Fact]
+    public void Get_ShouldFilterByAccountId_WhenAccountIdIsProvided()
+    {
+        // Arrange
+        _mockTransactionRepository.Setup(r => r.GetAll()).Returns(_transactions.AsQueryable());
+        var accountId = _transactions[0].AccountId;
+        var transactionQuery = new TransactionQuery { WithAccountId = accountId };
+
+        // Act
+        var result = _transactionService.Get(transactionQuery);
+
+        // Assert
+        _mockTransactionRepository.Verify(r => r.GetAll(), Times.Once);
+        Assert.Equal(_transactions.Where(x => x.AccountId == accountId).Count(), result.Count());
+    }
+
+    [Fact]
+    public void Get_ShouldFilterByFromDate_WhenFromDateIsProvided()
+    {
+        //Arrange
+        _mockTransactionRepository.Setup(r => r.GetAll()).Returns(_transactions.AsQueryable());
+        var fromDate = _transactions[1].Date;
+        var transactionQuery = new TransactionQuery { FromDate = fromDate };
+
+        //Act
+        var result = _transactionService.Get(transactionQuery);
+
+        //Assert
+        _mockTransactionRepository.Verify(r => r.GetAll(), Times.Once);
+        Assert.Equal(_transactions.Where(x => x.Date >= fromDate).Count(), result.Count());
+    }
+
+    [Fact]
+    public void Get_ShouldFilterByToDate_WhenToDateIsProvided()
+    {
+        //Arrange
+        _mockTransactionRepository.Setup(r => r.GetAll()).Returns(_transactions.AsQueryable());
+        var toDate = _transactions[4].Date;
+        var transactionQuery = new TransactionQuery { ToDate = toDate };
+
+        //Act
+        var result = _transactionService.Get(transactionQuery);
+
+        //Assert
+        _mockTransactionRepository.Verify(r => r.GetAll(), Times.Once);
+        Assert.Equal(_transactions.Where(x => x.Date <= toDate).Count(), result.Count());
+    }
+
+    [Fact]
+    public void Get_ShouldFilterByAccountIdAndDateRange_WhenAllFiltersAreProvided()
+    {
+        //Arrange
+        _mockTransactionRepository.Setup(r => r.GetAll()).Returns(_transactions.AsQueryable());
+        var fromDate = _transactions[1].Date;
+        var toDate = _transactions[4].Date;
+        var accountId = _transactions[0].AccountId;
+        var transactionQuery = new TransactionQuery { WithAccountId = accountId, FromDate = fromDate, ToDate = toDate };
+
+        //Act
+        var result = _transactionService.Get(transactionQuery);
+
+        //Assert
+        _mockTransactionRepository.Verify(r => r.GetAll(), Times.Once);
+        Assert.Equal(_transactions.Where(x => x.AccountId == accountId && x.Date >= fromDate && x.Date <= toDate).Count(), result.Count());
     }
 
     [Fact]
@@ -323,65 +390,4 @@ public class TransactionServiceTest
         _mockTransactionRepository.Verify(r => r.GetByIdAsync(accountId, _cancellationToken), Times.Once);
     }
 
-    [Fact]
-    public async Task GetByAccountIdAsync_ShouldReturnAllTransactionsForGivenAccountId()
-    {
-        // Arrange
-        var accountId = _accounts[0].Id;
-        var transactions = _transactions.Where(t => t.AccountId == accountId).AsQueryable();
-
-
-        var savingsAccount = (SavingsAccount)_accounts[1];
-
-        _mockBankAccountRepository.Setup(r => r.GetByIdAsync(accountId, _cancellationToken))
-                                      .ReturnsAsync(savingsAccount);
-
-        _mockTransactionRepository.Setup(r => r.GetByCondition(It.IsAny<Expression<Func<Transaction, bool>>>()))
-                                  .Returns(transactions);
-
-        // Act
-        var result = await _transactionService.GetByAccountIdAsync(accountId);
-
-        // Assert
-        _mockTransactionRepository.Verify(r => r.GetByCondition(It.IsAny<Expression<Func<Transaction, bool>>>()), Times.Once);
-        Assert.Equal(transactions.Count(), result.Transactions.Count());
-    }
-
-    [Fact]
-    public async Task GetAccountStatementAsync_ShouldReturnCorrectAccountStatementForGivenAccountId()
-    {
-        // Arrange
-        var accountId = _accounts[0].Id;
-        var accountStatementQuery = new AccountStatementQuery
-        (
-            accountId,
-            new DateTime(2024, 6, 1)
-        );
-
-        var endOfSlidingMonth = accountStatementQuery.StartOfSlidingMonth.AddDays(30);
-
-        var transactions = _transactions.Where(
-            t => t.AccountId == accountId
-            && t.Date >= accountStatementQuery.StartOfSlidingMonth
-            && t.Date <= endOfSlidingMonth
-        ).AsQueryable();
-
-        _mockTransactionRepository.Setup(r => r.GetByCondition(It.IsAny<Expression<Func<Transaction, bool>>>()))
-                                  .Returns(transactions);
-
-        _mockBankAccountRepository.Setup(r => r.GetByIdAsync(accountStatementQuery.AccountId, _cancellationToken))
-                                      .ReturnsAsync(_accounts[0]);
-
-        // Act
-        var result = await _transactionService.GetAccountStatementAsync(accountStatementQuery);
-
-        // Assert
-        _mockTransactionRepository.Verify(r => r.GetByCondition(It.IsAny<Expression<Func<Transaction, bool>>>()), Times.Once);
-        _mockBankAccountRepository.Verify(r => r.GetByIdAsync(accountStatementQuery.AccountId, _cancellationToken), Times.Once);
-
-        Assert.Equal(_accounts[0].Balance, result.Balance);
-        Assert.Equal(transactions.Count(), result.Transactions.Length);
-        Assert.Equal(_transactions[4].Id, result.Transactions[0].Id);
-        Assert.Equal(_transactions[0].Id, result.Transactions[1].Id);
-    }
 }

@@ -19,9 +19,9 @@ public sealed class TransactionRepository(BankingDbContext dbContext) : Reposito
         BaseDelete(transaction);
     }
 
-    public IList<Transaction> GetAll()
+    public IQueryable<Transaction> GetAll()
     {
-        return [.. BaseGetAll()];
+        return BaseGetAll();
     }
 
     public async Task<Transaction?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
