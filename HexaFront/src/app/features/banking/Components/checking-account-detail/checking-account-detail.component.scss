@@ -1,0 +1,40 @@
+.full-width-table{
+    width: 100%;
+}
+
+.account-card {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+}
+
+.account-card-content {
+    text-align: center;
+}
+
+.minimal-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.align-right {
+    margin-left: auto;
+    text-align: right;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    justify-content: space-between;
+}
+
+mat-icon {
+    margin-right: 12px;
+}
+
+mat-card {
+    margin: 16px;
+}
