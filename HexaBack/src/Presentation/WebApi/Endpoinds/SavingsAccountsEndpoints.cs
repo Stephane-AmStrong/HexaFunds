@@ -12,17 +12,14 @@ public static class SavingsAccountsEndpoints
         var group = app.MapGroup("/api/savingsaccounts");
 
         group.MapGet("", GetAllSavingsAccounts)
-            .Produces<IList<SavingsAccountResponse>>()
-            .Produces(StatusCodes.Status200OK);
+            .Produces<IList<SavingsAccountResponse>>(StatusCodes.Status200OK);
 
         group.MapGet("{id:guid}", GetSavingsAccountById)
-            .Produces<SavingsAccountResponse>()
-            .Produces(StatusCodes.Status200OK);
+            .Produces<SavingsAccountResponse>(StatusCodes.Status200OK);
 
         group.MapPost("", CreateSavingsAccount)
             .Produces<SavingsAccountResponse>(StatusCodes.Status201Created)
-            .ProducesValidationProblem()
-            .Produces(StatusCodes.Status400BadRequest);
+            .ProducesValidationProblem(StatusCodes.Status400BadRequest);
 
         group.MapDelete("{id:guid}", DeleteSavingsAccount)
             .Produces(StatusCodes.Status204NoContent)

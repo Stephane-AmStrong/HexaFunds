@@ -12,17 +12,14 @@ public static class TransactionsEndpoints
         var group = app.MapGroup("/api/transactions");
 
         group.MapGet("/", GetAllTransactions)
-            .Produces<IList<TransactionResponse>>()
-            .Produces(StatusCodes.Status200OK);
+            .Produces<IList<TransactionResponse>>(StatusCodes.Status200OK);
 
         group.MapGet("/{id:guid}", GetTransactionById)
-            .Produces<TransactionResponse>()
-            .Produces(StatusCodes.Status200OK);
+            .Produces<TransactionResponse>(StatusCodes.Status200OK);
 
         group.MapPost("/", CreateTransaction)
             .Produces<TransactionResponse>(StatusCodes.Status201Created)
-            .ProducesValidationProblem()
-            .Produces(StatusCodes.Status400BadRequest);
+            .ProducesValidationProblem(StatusCodes.Status400BadRequest);
     }
 
     // GET /api/transactions
