@@ -12,17 +12,14 @@ public static class CheckingAccountsEndpoints
         var group = app.MapGroup("/api/checkingaccounts");
 
         group.MapGet("/", GetAllCheckingAccounts)
-            .Produces<IList<CheckingAccountResponse>>()
-            .Produces(StatusCodes.Status200OK);
+            .Produces<IList<CheckingAccountResponse>>(StatusCodes.Status200OK);
 
         group.MapGet("/{id:guid}", GetCheckingAccountById)
-            .Produces<CheckingAccountResponse>()
-            .Produces(StatusCodes.Status200OK);
+            .Produces<CheckingAccountResponse>(StatusCodes.Status200OK);
 
         group.MapPost("/", CreateCheckingAccount)
             .Produces<CheckingAccountResponse>(StatusCodes.Status201Created)
-            .ProducesValidationProblem()
-            .Produces(StatusCodes.Status400BadRequest);
+            .ProducesValidationProblem(StatusCodes.Status400BadRequest);
 
         group.MapDelete("/{id:guid}", DeleteCheckingAccount)
             .Produces(StatusCodes.Status204NoContent)
