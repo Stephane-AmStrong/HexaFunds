@@ -1,6 +1,7 @@
 using DataTransfertObjects;
 
 using Services.Abstractions;
+using WebApi.Extensions;
 
 namespace WebApplicationDocker.Endpoints;
 
@@ -18,6 +19,7 @@ public static class TransactionsEndpoints
             .Produces<TransactionResponse>(StatusCodes.Status200OK);
 
         group.MapPost("/", CreateTransaction)
+            .WithRequestValidation<TransactionRequest>()
             .Produces<TransactionResponse>(StatusCodes.Status201Created)
             .ProducesValidationProblem(StatusCodes.Status400BadRequest);
     }

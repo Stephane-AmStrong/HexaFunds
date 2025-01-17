@@ -90,4 +90,8 @@ public static class ServiceCollectionExtensions
         }
     }
 
+    public static RouteHandlerBuilder WithRequestValidation<TRequest>(this RouteHandlerBuilder builder)
+    {
+        return builder.AddEndpointFilter<Filters.ValidationFilter<TRequest>>().ProducesValidationProblem();
+    }
 }

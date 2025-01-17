@@ -4,11 +4,9 @@ using Domain.Exceptions;
 
 namespace WebApi.Middleware;
 
-internal sealed class ExceptionHandlingMiddleware : IMiddleware
+internal sealed class ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> logger) : IMiddleware
 {
-    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
-
-    public ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> logger) => _logger = logger;
+    private readonly ILogger<ExceptionHandlingMiddleware> _logger = logger;
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
@@ -30,14 +28,16 @@ internal sealed class ExceptionHandlingMiddleware : IMiddleware
 
         httpContext.Response.StatusCode = exception switch
         {
-            BadRequestException => StatusCodes.Status400BadRequest,
+            BadRequestException or BadHttpRequestException => StatusCodes.Status400BadRequest,
             NotFoundException => StatusCodes.Status404NotFound,
             _ => StatusCodes.Status500InternalServerError
         };
 
+
         var response = new
         {
-            error = exception.Message
+            ErrorMessage = exception.InnerException is JsonException ? exception.InnerException?.Message : exception.Message,
+            TraceId = httpContext.TraceIdentifier
         };
 
         await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response));

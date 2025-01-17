@@ -7,7 +7,6 @@ using Domain.Repositories.Abstractions;
 using Mapster;
 
 using Services.Abstractions;
-using Services.Utils;
 
 namespace Services;
 
@@ -15,9 +14,6 @@ public sealed class CheckingAccountService(ICheckingAccountRepository checkingAc
 {
     public async Task<CheckingAccountResponse> CreateAsync(CheckingAccountRequest checkingAccountRequest, CancellationToken cancellationToken)
     {
-        var validationResults = CustomValidator.ValidateModel(checkingAccountRequest);
-        if (validationResults.Any()) throw new BadRequestException(string.Join(' ', validationResults.Select(x => x.Value)));
-
         var checkingAccount = checkingAccountRequest.Adapt<CheckingAccount>();
 
         await checkingAccountRepository.CreateAsync(checkingAccount, cancellationToken).ConfigureAwait(false);
@@ -52,9 +48,6 @@ public sealed class CheckingAccountService(ICheckingAccountRepository checkingAc
 
     public async Task UpdateAsync(Guid id, CheckingAccountRequest checkingAccountRequest, CancellationToken cancellationToken)
     {
-        var validationResults = CustomValidator.ValidateModel(checkingAccountRequest);
-        if (validationResults.Any()) throw new BadRequestException(string.Join(' ', validationResults.Select(x => x.Value)));
-
         var checkingAccount = await checkingAccountRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new AccountNotFoundException(id);
 
         checkingAccountRequest = checkingAccountRequest with

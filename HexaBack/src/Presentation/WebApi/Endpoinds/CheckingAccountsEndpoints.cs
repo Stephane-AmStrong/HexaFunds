@@ -1,8 +1,9 @@
 using DataTransfertObjects;
 
 using Services.Abstractions;
+using WebApi.Extensions;
 
-namespace WebApplicationDocker.Endpoints;
+namespace WebApi.Endpoinds;
 
 public static class CheckingAccountsEndpoints
 {
@@ -18,6 +19,7 @@ public static class CheckingAccountsEndpoints
             .Produces<CheckingAccountResponse>(StatusCodes.Status200OK);
 
         group.MapPost("/", CreateCheckingAccount)
+            .WithRequestValidation<CheckingAccountRequest>()
             .Produces<CheckingAccountResponse>(StatusCodes.Status201Created)
             .ProducesValidationProblem(StatusCodes.Status400BadRequest);
 
@@ -26,6 +28,7 @@ public static class CheckingAccountsEndpoints
             .Produces(StatusCodes.Status404NotFound);
 
         group.MapPut("/{id:guid}", UpdateCheckingAccount)
+            .WithRequestValidation<CheckingAccountRequest>()
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);

@@ -7,7 +7,6 @@ using Domain.Repositories.Abstractions;
 using Mapster;
 
 using Services.Abstractions;
-using Services.Utils;
 
 namespace Services;
 
@@ -24,9 +23,6 @@ public sealed class TransactionService(
 
     public async Task<TransactionResponse> CreateAsync(TransactionRequest transactionRequest, CancellationToken cancellationToken = default)
     {
-        var validationResults = CustomValidator.ValidateModel(transactionRequest);
-        if (validationResults.Any()) throw new BadRequestException(string.Join(' ', validationResults.Select(x => x.Value)));
-
         var account = await GetAccount(transactionRequest.AccountId, cancellationToken).ConfigureAwait(false);
 
         var nextBalance = transactionRequest.Type == TransactionType.Credit ? account.Balance + transactionRequest.Amount : account.Balance - transactionRequest.Amount;
