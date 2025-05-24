@@ -1,3 +1,4 @@
 export interface BankAccountRequest {
-    accountNumber: string;
+  id?: string;
+  accountNumber: string;
 }
