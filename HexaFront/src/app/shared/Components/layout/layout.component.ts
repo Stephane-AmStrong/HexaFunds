@@ -9,7 +9,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
-import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
+import {
+  MatSlideToggleChange,
+  MatSlideToggleModule,
+} from '@angular/material/slide-toggle';
 import { RouterLink } from '@angular/router';
 import { ThemeService } from '../../services/theme.service';
 
@@ -33,20 +36,28 @@ import { ThemeService } from '../../services/theme.service';
 export class LayoutComponent {
   title = 'hexa-front';
 
+  protected readonly fillerNav = Array.from(
+    { length: 10 },
+    (_, i) => `Nav Item ${i + 1}`
+  );
+
   private breakpointObserver = inject(BreakpointObserver);
-  private themeService = inject(ThemeService)
+  private themeService = inject(ThemeService);
 
   darkmodeSwitched = output<boolean>();
-  
+
   isDarkMode = this.themeService.getTheme()() === 'dark';
 
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
+  isHandset$: Observable<boolean> = this.breakpointObserver
+    .observe(Breakpoints.Handset)
     .pipe(
-      map(result => result.matches),
+      map((result) => result.matches),
       shareReplay()
     );
 
-    onSlideClick($event: MatSlideToggleChange){
-      this.darkmodeSwitched.emit($event.checked)
-    }
+  onSlideClick($event: MatSlideToggleChange) {
+    this.darkmodeSwitched.emit($event.checked);
+  }
+
+  navList = [];
 }
