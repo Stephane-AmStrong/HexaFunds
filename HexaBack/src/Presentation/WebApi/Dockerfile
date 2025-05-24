@@ -37,7 +37,7 @@ COPY --chown=$APP_UID:$APP_UID --from=publish /app/publish .
 COPY --chown=$APP_UID:$APP_UID /src/Presentation/WebApi/https/aspnetapp.pfx /app/https/aspnetapp.pfx
 
 # Appliquer les migrations avant de démarrer l'application
-# RUN dotnet ef database update --project .\src\Infrastructure\Persistence\ --startup-project .\src\Presentat
+# RUN dotnet ef database update --project src/Infrastructure/Persistence --startup-project src/Presentation/WebApi/WebApi/
 
 # Exposition des ports
 EXPOSE 80
