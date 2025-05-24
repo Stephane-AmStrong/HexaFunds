@@ -1,8 +1,0 @@
-<h1 class="mat-h1">Checking Account</h1>
-<mat-grid-list cols="5" rowHeight="350px">
-    @for ( checkingAccount of checkingAccounts(); track checkingAccount.id) {
-    <mat-grid-tile [routerLink]="checkingAccount.id">
-        <account-card [bankAccount]="checkingAccount" />
-    </mat-grid-tile>
-    }
-</mat-grid-list>

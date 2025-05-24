@@ -1,0 +1,93 @@
+<h1 class="mat-h1">Checking Account Details
+  <button mat-mini-fab (click)="edit()">
+    <mat-icon>edit</mat-icon>
+  </button>
+  <button mat-mini-fab (click)="delete()">
+    <mat-icon>delete</mat-icon>
+  </button>
+</h1>
+<mat-grid-list cols="3" rowHeight="250px">
+
+  <mat-grid-tile [colspan]="1">
+    <mat-card class="account-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>account_circle</mat-icon>
+          Account Number
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="account-card-content">
+        <h1>{{ checkingAccount().accountNumber }}</h1>
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+
+  <mat-grid-tile [colspan]="1">
+    <mat-card class="account-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>money</mat-icon>
+          Balance
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="account-card-content">
+        <h1>{{ checkingAccount().balance }}</h1>
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+
+  <mat-grid-tile [colspan]="1">
+    <mat-card class="account-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>credit_card</mat-icon>
+          Overdraft Limit
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="account-card-content">
+        <h1>{{ checkingAccount().overdraftLimit }}</h1>
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+
+  <mat-grid-tile [colspan]="3" [rowspan]="4">
+    <mat-card class="account-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>Transactions</mat-card-title>
+
+        <button mat-mini-fab (click)="addTransaction()">
+          <mat-icon>add</mat-icon>
+          <!-- Ajouter une Transaction -->
+        </button>
+
+      </mat-card-header>
+
+      <mat-card-content class="account-card-content">
+        @if (transactions().length) {
+        <table mat-table class="full-width-table" [dataSource]="transactions()" matSort aria-label="Elements">
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+            <td mat-cell *matCellDef="let row">{{row.type}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount</th>
+            <td mat-cell *matCellDef="let row">{{row.amount}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+            <td mat-cell *matCellDef="let row">{{row.date | date : "dd MMM yyyy 'at' hh:mm"}}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        }@else {
+        <h1>none for now</h1>
+        }
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+
+</mat-grid-list>
