@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>{{title()}}</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="formCheckingAccount">
+
+        <mat-form-field>
+            <mat-label>Account Number</mat-label>
+            <input matInput formControlName="accountNumber">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Overdraft Limit</mat-label>
+            <input type="number" matInput formControlName="overdraftLimit">
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Close</button>
+    @if (checkingAccount.deletion) {
+    <button mat-button (click)="delete()">Delete</button>
+    }@else {
+    <button mat-button (click)="save()">Save</button>
+    }
+</mat-dialog-actions>
