@@ -142,6 +142,13 @@ $light-theme: mat.define-theme(
       primary: $_primary,
       tertiary: $_tertiary,
     ),
+    typography: (
+      plain-family: Roboto,
+      brand-family: Open Sans,
+      bold-weight: 900,
+      medium-weight: 500,
+      regular-weight: 300,
+    ),
     density: (
       scale: 0,
     ),
@@ -154,6 +161,13 @@ $dark-theme: mat.define-theme(
       theme-type: dark,
       primary: $_primary,
       tertiary: $_tertiary,
+    ),
+    typography: (
+      plain-family: Roboto,
+      brand-family: Open Sans,
+      bold-weight: 900,
+      medium-weight: 500,
+      regular-weight: 300,
     ),
     density: (
       scale: 0,
