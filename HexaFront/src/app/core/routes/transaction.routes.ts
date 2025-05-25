@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
-import { TransactionComponent } from '../../features/banking/Components/transaction/transaction.component';
 import { TransactionDetailComponent } from '../../features/banking/Components/transaction-detail/transaction-detail.component';
+import { TransactionListComponent } from '../../features/banking/Components/transaction/transaction-list/transaction-list.component';
 
 export const transactionRoutes: Routes = [
   {
     path: '',
-    component: TransactionComponent,
+    component: TransactionListComponent,
   },
   {
     path: ':id',
