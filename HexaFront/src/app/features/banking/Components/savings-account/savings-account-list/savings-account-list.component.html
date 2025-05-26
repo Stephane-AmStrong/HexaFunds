@@ -1,0 +1,13 @@
+<h1 class="mat-h1">Savings Account
+    <button mat-fab (click)="addSavingsAccount()">
+        <mat-icon>add</mat-icon>
+    </button>
+</h1>
+
+<mat-grid-list cols="5" rowHeight="350px">
+    @for ( savingsAccount of savingsAccounts(); track savingsAccount.id) {
+    <mat-grid-tile [routerLink]="savingsAccount.id">
+        <account-card [bankAccount]="savingsAccount" />
+    </mat-grid-tile>
+    }
+</mat-grid-list>

@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>{{title()}}</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="formTransaction">
+        <mat-form-field>
+            <mat-label>Amount</mat-label>
+            <input matInput formControlName="amount">
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Type</mat-label>
+            <mat-select formControlName="type">
+                <mat-option value="Credit">Credit</mat-option>
+                <mat-option value="Debit">Debit</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Close</button>
+    <button mat-button (click)="onSubmit()"> {{transaction.deletion ? 'Delete' : 'Save'}}</button>
+</mat-dialog-actions>

@@ -1,4 +1,1 @@
-export interface TransactionType {
-    credit:"Credit",
-    debit:"Debit",
-}
+export type TransactionType = "Credit" | "Debit"

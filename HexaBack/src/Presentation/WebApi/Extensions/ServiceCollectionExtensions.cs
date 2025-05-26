@@ -21,7 +21,9 @@ public static class ServiceCollectionExtensions
             {
                 builder.WithOrigins(
                     "http://localhost:4200",
-                    "https://localhost:4200"
+                    "https://localhost:4200",
+                    "http://localhost:5173",
+                    "https://localhost:5173"
                 )
                 .AllowAnyHeader()
                 .AllowAnyMethod();
@@ -90,4 +92,8 @@ public static class ServiceCollectionExtensions
         }
     }
 
+    public static RouteHandlerBuilder WithRequestValidation<TRequest>(this RouteHandlerBuilder builder)
+    {
+        return builder.AddEndpointFilter<Filters.ValidationFilter<TRequest>>().ProducesValidationProblem();
+    }
 }

@@ -1,6 +1,5 @@
-
-@use '@angular/material' as mat;
-@use '../m3-theme';
+@use "@angular/material" as mat;
+@use "../m3-theme";
 
 @include mat.core();
 
@@ -11,10 +10,24 @@
     @include mat.all-component-themes(m3-theme.$light-theme);
   }
 
-  .light-theme{
+  @media (prefers-color-scheme: dark) {
+    @include mat.all-component-themes(m3-theme.$dark-theme);
+  }
+
+  .dark-theme {
+    @include mat.all-component-themes(m3-theme.$dark-theme);
+  }
+
+  .light-theme {
     @include mat.all-component-themes(m3-theme.$light-theme);
   }
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}

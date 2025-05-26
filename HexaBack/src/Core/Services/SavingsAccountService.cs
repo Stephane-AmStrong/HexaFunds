@@ -7,7 +7,6 @@ using Domain.Repositories.Abstractions;
 using Mapster;
 
 using Services.Abstractions;
-using Services.Utils;
 
 namespace Services;
 
@@ -15,9 +14,6 @@ public sealed class SavingsAccountService(ISavingsAccountRepository savingsAccou
 {
     public async Task<SavingsAccountResponse> CreateAsync(SavingsAccountRequest savingsAccountRequest, CancellationToken cancellationToken = default)
     {
-        var validationResults = CustomValidator.ValidateModel(savingsAccountRequest);
-        if (validationResults.Any()) throw new BadRequestException(string.Join(' ', validationResults.Select(x => x.Value)));
-
         var savingsAccount = savingsAccountRequest.Adapt<SavingsAccount>();
 
         await savingsAccountRepository.CreateAsync(savingsAccount, cancellationToken).ConfigureAwait(false);
@@ -52,9 +48,6 @@ public sealed class SavingsAccountService(ISavingsAccountRepository savingsAccou
 
     public async Task UpdateAsync(Guid id, SavingsAccountRequest savingsAccountRequest, CancellationToken cancellationToken = default)
     {
-        var validationResults = CustomValidator.ValidateModel(savingsAccountRequest);
-        if (validationResults.Any()) throw new BadRequestException(string.Join(' ', validationResults.Select(x => x.Value)));
-
         var savingsAccount = await savingsAccountRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false) ?? throw new AccountNotFoundException(id);
 
         savingsAccountRequest = savingsAccountRequest with

@@ -4,16 +4,20 @@ import { Observable, shareReplay } from 'rxjs';
 import { TransactionRequest } from '../models/transaction-request';
 import { TransactionResponse } from '../models/transaction-response';
 import { TransactionQuery } from '../models/transaction-query';
+import { HttpWrapperService } from './http-wrapper.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TransactionService {
   private BASE_URL: string = `transactions`;
-  private http = inject(HttpClient);
+  private http = inject(HttpWrapperService);
 
-  get(transactionQuery : TransactionQuery): Observable<TransactionResponse[]> {
+  getAll(): Observable<TransactionResponse[]> {
+    return this.http.handleRequest('GET', this.BASE_URL);
+  }
 
+  get(transactionQuery: TransactionQuery): Observable<TransactionResponse[]> {
     let params = new HttpParams();
 
     if (transactionQuery.withAccountId) {
@@ -26,22 +30,18 @@ export class TransactionService {
       params = params.set('toDate', transactionQuery.toDate.toISOString());
     }
 
-    return this.http
-      .get<TransactionResponse[]>(this.BASE_URL,{
-        params
-      })
-      .pipe(shareReplay());
+    return this.http.handleRequest('GET', this.BASE_URL, {
+      params,
+    });
   }
 
   getById(id: string): Observable<TransactionResponse> {
-    return this.http
-      .get<TransactionResponse>(`${this.BASE_URL}/${id}`)
-      .pipe(shareReplay());
+    return this.http.handleRequest('GET', `${this.BASE_URL}/${id}`);
   }
 
   create(transaction: TransactionRequest): Observable<TransactionResponse> {
-    return this.http
-      .post<TransactionResponse>(this.BASE_URL, transaction)
-      .pipe(shareReplay());
+    return this.http.handleRequest('POST', this.BASE_URL, {
+      body: transaction,
+    });
   }
 }

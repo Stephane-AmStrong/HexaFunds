@@ -1,6 +1,7 @@
 using DataTransfertObjects;
 
 using Services.Abstractions;
+using WebApi.Extensions;
 
 namespace WebApplicationDocker.Endpoints;
 
@@ -18,6 +19,7 @@ public static class SavingsAccountsEndpoints
             .Produces<SavingsAccountResponse>(StatusCodes.Status200OK);
 
         group.MapPost("", CreateSavingsAccount)
+            .WithRequestValidation<SavingsAccountRequest>()
             .Produces<SavingsAccountResponse>(StatusCodes.Status201Created)
             .ProducesValidationProblem(StatusCodes.Status400BadRequest);
 
@@ -26,6 +28,7 @@ public static class SavingsAccountsEndpoints
             .Produces(StatusCodes.Status404NotFound);
 
         group.MapPut("{id:guid}", UpdateSavingsAccount)
+            .WithRequestValidation<SavingsAccountRequest>()
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);

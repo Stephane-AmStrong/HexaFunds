@@ -1,5 +1,7 @@
 using AspNetCore.Swagger.Themes;
-
+using DataTransfertObjects;
+using FluentValidation;
+using WebApi.Endpoinds;
 using WebApi.Extensions;
 using WebApi.Middleware;
 
@@ -18,6 +20,7 @@ builder.Services.ConfigureBankingServices();
 builder.Services.ConfigureGlobalExceptionHandling();
 
 builder.Services.AddHealthChecks();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 var app = builder.Build();
 
