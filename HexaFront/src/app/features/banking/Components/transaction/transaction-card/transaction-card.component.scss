@@ -1,0 +1,75 @@
+@use "@angular/material" as mat;
+@use "../../../../../../../m3-theme.scss" as theme;
+
+.transaction-card {
+  margin: 8px;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    @include mat.elevation(4);
+  }
+}
+
+.transaction-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.amount {
+  font: var(--mat-title-large-font);
+  letter-spacing: var(--mat-title-large-letter-spacing);
+
+  &.credit {
+    color: mat.get-theme-color(theme.$dark-theme, "primary");
+  }
+
+  &.debit {
+    color: mat.get-theme-color(theme.$dark-theme, "error");
+  }
+}
+
+.transaction-details {
+  .detail-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+
+    mat-icon {
+      font: var(--mat-body-small-font);
+      letter-spacing: var(--mat-body-small-letter-spacing);
+    }
+
+    span {
+      font: var(--mat-body-medium-font);
+      letter-spacing: var(--mat-body-medium-letter-spacing);
+    }
+  }
+}
+
+// :host-context(.light-theme) {
+//   .amount {
+//     &.credit {
+//       color: mat.get-theme-color(theme.$light-theme, "primary", 80);
+//     }
+
+//     &.debit {
+//       color: mat.get-theme-color(theme.$light-theme, "error", 80);
+//     }
+//   }
+// }
+
+// :host-context(.dark-theme) {
+//   .amount {
+//     &.credit {
+//       color: mat.get-theme-color(theme.$dark-theme, "primary", 80);
+//     }
+
+//     &.debit {
+//       color: mat.get-theme-color(theme.$dark-theme, "error", 80);
+//     }
+//   }
+// }

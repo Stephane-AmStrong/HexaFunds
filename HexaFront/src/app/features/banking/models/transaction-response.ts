@@ -1,8 +1,5 @@
-import { TransactionType } from './transaction-type';
+import { TransactionRequest } from './transaction-request';
 
-export interface TransactionResponse {
+export interface TransactionResponse extends TransactionRequest {
   id: string;
-  date: Date;
-  amount: number;
-  type: TransactionType;
 }

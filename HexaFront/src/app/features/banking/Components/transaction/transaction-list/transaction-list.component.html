@@ -1,0 +1,9 @@
+<h1 class="mat-h1">Transaction</h1>
+
+<mat-grid-list cols="8" rowHeight="200px">
+    @for ( transaction of transactions(); track transaction.id) {
+    <mat-grid-tile [routerLink]="transaction.id">
+        <transaction-card [transaction]="transaction" />
+    </mat-grid-tile>
+    }
+</mat-grid-list>

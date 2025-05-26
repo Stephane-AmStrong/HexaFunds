@@ -1,0 +1,20 @@
+<mat-card class="transaction-card" appearance="outlined" matRipple [ngClass]="getTransactionTypeClass()">
+    <mat-card-content>
+        <div class="transaction-header">
+            <span class="amount"
+                [ngClass]="{'credit': transaction().type === 'Credit', 'debit': transaction().type === 'Debit'}">
+                {{ transaction().amount | currency:'EUR':'symbol':'1.2-2' }}
+            </span>
+            <mat-chip-option [selected]="true" [color]="transaction().type === 'Credit' ? 'accent' : 'warn'" disabled>
+                {{ transaction().type }}
+            </mat-chip-option>
+        </div>
+
+        <div class="transaction-details">
+            <div class="detail-row">
+                <mat-icon>event</mat-icon>
+                <span>{{ transaction().date | date:'medium' }}</span>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>
