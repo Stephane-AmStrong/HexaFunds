@@ -10,6 +10,7 @@ import { CheckingAccountResponse } from '../../../models/checking-account-respon
 import { openCheckingAccountDialog } from '../checking-account-dialog/checking-account-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { filter } from 'rxjs';
+import { CheckingAccountRequest } from '../../../models/checking-account-request';
 
 @Component({
   selector: 'checking-account-list',
@@ -37,7 +38,22 @@ export class CheckingAccountListComponent {
 
   addCheckingAccount() {
     openCheckingAccountDialog(this.dialog, {})
-      .pipe(filter((val) => !!val))
-      .subscribe();
+      .pipe(filter((checkingAccountRequest) => !!checkingAccountRequest))
+      .subscribe((checkingAccountRequest) => {
+        this.create(checkingAccountRequest);
+      });
+  }
+
+  create(checkingAccountRequest: CheckingAccountRequest) {
+    if (!checkingAccountRequest.id) {
+      this.checkingAccountService
+        .create(checkingAccountRequest)
+        .subscribe((newCheckingAccount) =>
+          console.log(
+            'New checking account created successfully:'
+            // newCheckingAccount
+          )
+        );
+    }
   }
 }

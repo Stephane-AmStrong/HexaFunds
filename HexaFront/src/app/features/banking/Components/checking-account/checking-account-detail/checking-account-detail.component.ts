@@ -9,7 +9,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { openDialog } from '../../../../../shared/Components/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { filter } from 'rxjs';
 import { DatePipe } from '@angular/common';
@@ -18,6 +17,11 @@ import {
   openCheckingAccountDialog,
 } from '../checking-account-dialog/checking-account-dialog.component';
 import { Router } from '@angular/router';
+import { CheckingAccountRequest } from '../../../models/checking-account-request';
+import { CheckingAccountService } from '../../../services/checking-account.service';
+import { openTransactionDialog } from '../../transaction/transaction-dialog/transaction-dialog.component';
+import { TransactionService } from '../../../services/transaction.service';
+import { TransactionRequest } from '../../../models/transaction-request';
 
 @Component({
   selector: 'checking-account-detail',
@@ -41,6 +45,10 @@ export class CheckingAccountDetailComponent {
 
   private router = inject(Router);
   private dialog = inject(MatDialog);
+
+  private checkingAccountService = inject(CheckingAccountService);
+  private transactionService = inject(TransactionService);
+
   checkingAccount = model.required<CheckingAccountResponse>();
   transactions = model.required<TransactionResponse[]>();
 
@@ -48,32 +56,75 @@ export class CheckingAccountDetailComponent {
 
   displayedColumns = ['type', 'amount', 'date'];
 
-  edit() {
+  editCheckingAccount() {
     openCheckingAccountDialog(this.dialog, {
       ...this.checkingAccount(),
     })
-      .pipe(filter((val) => !!val))
-      .subscribe();
+      .pipe(filter((checkingAccountResponse) => !!checkingAccountResponse))
+      .subscribe((checkingAccountResponse) => {
+        this.save(checkingAccountResponse);
+      });
   }
 
-  delete() {
+  deleteCheckingAccount() {
     openCheckingAccountDeleteConfirmationDialog(this.dialog, {
       ...this.checkingAccount(),
     })
-      .pipe(filter((val) => !!val))
-      .subscribe(() => this.router.navigate(['/checking-accounts']));
+      .pipe(filter((checkingAccountRequest) => !!checkingAccountRequest))
+      .subscribe((checkingAccountReponse) =>
+        this.delete(checkingAccountReponse)
+      );
   }
 
   addTransaction() {
-    openDialog(this.dialog, {
+    openTransactionDialog(this.dialog, {
       accountId: this.checkingAccount().id,
     })
-      .pipe(filter((val) => !!val))
-      .subscribe((transaction) =>
+      .pipe(filter((TransactionResponse) => !!TransactionResponse))
+      .subscribe((TransactionResponse) =>
+        this.saveTransaction(TransactionResponse)
+      );
+  }
+
+  save(checkingAccountRequest: CheckingAccountRequest) {
+    if (checkingAccountRequest.id) {
+      this.checkingAccountService
+        .update(checkingAccountRequest.id, checkingAccountRequest)
+        .subscribe(() =>
+          this.checkingAccount.set({
+            ...checkingAccountRequest,
+            balance: this.checkingAccount().balance,
+          } as CheckingAccountResponse)
+        );
+    }
+  }
+
+  delete(checkingAccountRequest: CheckingAccountRequest) {
+    if (checkingAccountRequest.id) {
+      this.checkingAccountService
+        .delete(checkingAccountRequest.id)
+        .subscribe(() => this.router.navigate(['/checking-accounts']));
+    }
+  }
+
+  saveTransaction(transactionRequest: TransactionRequest) {
+    this.transactionService
+      .create(transactionRequest)
+      .subscribe((newTransaction) => {
         this.transactions.update((currentTransactions) => [
           ...currentTransactions,
-          transaction,
-        ])
-      );
+          newTransaction,
+        ]);
+
+        const newBalance =
+          newTransaction.type === 'Credit'
+            ? this.checkingAccount().balance + newTransaction.amount
+            : this.checkingAccount().balance - newTransaction.amount;
+
+        this.checkingAccount.update((account) => ({
+          ...account,
+          balance: newBalance,
+        }));
+      });
   }
 }

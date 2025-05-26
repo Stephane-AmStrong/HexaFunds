@@ -17,9 +17,5 @@
 
 <mat-dialog-actions align="end">
     <button mat-button (click)="close()">Close</button>
-    @if (checkingAccount.deletion) {
-    <button mat-button (click)="delete()">Delete</button>
-    }@else {
-    <button mat-button (click)="save()">Save</button>
-    }
+    <button mat-button (click)="onSubmit()"> {{checkingAccount.deletion ? 'Delete' : 'Save'}}</button>
 </mat-dialog-actions>

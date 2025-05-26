@@ -1,4 +1,4 @@
-import { Component, Inject, inject, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormsModule,
@@ -18,11 +18,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { DialogComponent } from '../../../../../shared/Components/dialog/dialog.component';
-import { CheckingAccountService } from '../../../services/checking-account.service';
 import { CheckingAccountRequest } from '../../../models/checking-account-request';
-import { Observable } from 'rxjs';
 import { CheckingAccountResponse } from '../../../models/checking-account-response';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'checking-account-dialog',
@@ -45,7 +43,6 @@ export class CheckingAccountDialogComponent {
 
   private formbuilder = inject(FormBuilder);
   private dialogRef = inject(MatDialogRef<CheckingAccountDialogComponent>);
-  private checkingAccountService = inject(CheckingAccountService);
   protected checkingAccount = inject(MAT_DIALOG_DATA);
 
   formCheckingAccount: FormGroup = this.formbuilder.group({
@@ -70,31 +67,9 @@ export class CheckingAccountDialogComponent {
     this.dialogRef.close();
   }
 
-  save() {
+  onSubmit() {
     const changes = this.formCheckingAccount.value;
-    if (!changes.id) {
-      this.checkingAccountService
-        .create(changes)
-        .subscribe((newCheckingAccount) =>
-          this.dialogRef.close(newCheckingAccount)
-        );
-    } else {
-      this.checkingAccountService
-        .update(changes.id, changes)
-        .subscribe((updatedCheckingAccount) =>
-          this.dialogRef.close(updatedCheckingAccount)
-        );
-    }
-  }
-
-  delete() {
-    const changes = this.formCheckingAccount.value;
-
-    this.checkingAccountService
-      .delete(changes.id)
-      .subscribe((deletedCheckingAccount) =>
-        this.dialogRef.close(deletedCheckingAccount)
-      );
+    this.dialogRef.close(changes);
   }
 }
 
