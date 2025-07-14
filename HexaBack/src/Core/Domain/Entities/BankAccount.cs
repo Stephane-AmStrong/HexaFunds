@@ -1,15 +1,21 @@
-﻿namespace Domain.Entities;
+﻿using Domain.Extensions;
 
-public abstract class BankAccount
+namespace Domain.Entities;
+
+public record BankAccount(Guid Id, string AccountNumber, IAccountBehavior AccountBehavior, ICollection<Transaction> Transactions)
 {
-    public BankAccount()
+    public float Balance { get; set; }
+    public BankAccount(Guid id, string accountNumber, float balance, IAccountBehavior accountBehavior) : this(id, accountNumber, accountBehavior, new HashSet<Transaction>())
     {
-        Transactions = new HashSet<Transaction>();
+        Balance = balance;
     }
 
-    public Guid Id { get; init; }
-    public required string AccountNumber { get; init; }
-    public float Balance { get; set; }
-    public virtual ICollection<Transaction> Transactions { get; init; }
+    public BankAccount() : this(Guid.Empty, string.Empty, default!, new HashSet<Transaction>())
+    { }
+
+    public void ApplyTransaction(Transaction transaction)
+    {
+        AccountBehavior.ApplyTransaction(this, transaction);
+    }
 }
 
