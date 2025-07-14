@@ -4,13 +4,13 @@ services:
       context: HexaFront/
       dockerfile: Dockerfile
     ports:
-      - 4200:4200 
+      - 4200:4200
     depends_on:
       - hexafunds.api
     volumes:
       - ./HexaFront:/project
       - /project/node_modules
-      
+
   hexafunds.api:
     build:
       context: HexaBack/
@@ -20,34 +20,38 @@ services:
       - 5000:80
       - 5001:443
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail https://localhost:443/health --insecure || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail https://localhost:443/health --insecure || exit 1",
+        ]
       interval: 20s
       timeout: 5s
       retries: 3
       start_period: 15s
     depends_on:
-      hexafunds.db: 
+      hexafunds.db:
         condition: service_healthy
-        
+
   hexafunds.db:
     user: postgres
     image: postgres:12.20-alpine3.20
-    container_name: hexafunds_db
+    container_name: hexafunds.db
     secrets:
       - db-password
     volumes:
-        - db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=hexafunds
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
     healthcheck:
-      test: [ "CMD", "pg_isready" ]
+      test: ["CMD", "pg_isready"]
       interval: 20s
       timeout: 5s
       retries: 5
       start_period: 15s
     ports:
-        - 5432:5432
+      - 5432:5432
 volumes:
   db-data:
 secrets:
