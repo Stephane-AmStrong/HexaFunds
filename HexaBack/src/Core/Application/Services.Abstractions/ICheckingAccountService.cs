@@ -1,7 +1,7 @@
 ﻿
-using DataTransfertObjects;
+using Application.DataTransfertObjects;
 
-namespace Services.Abstractions;
+namespace Application.Services.Abstractions;
 
 public interface ICheckingAccountService
 {

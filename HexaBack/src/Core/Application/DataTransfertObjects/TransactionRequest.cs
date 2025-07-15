@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace DataTransfertObjects;
+namespace Application.DataTransfertObjects;
 
 public record TransactionRequest
 {
