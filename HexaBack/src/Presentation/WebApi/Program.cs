@@ -1,5 +1,4 @@
 using AspNetCore.Swagger.Themes;
-using DataTransfertObjects;
 using FluentValidation;
 using WebApi.Endpoinds;
 using WebApi.Extensions;
