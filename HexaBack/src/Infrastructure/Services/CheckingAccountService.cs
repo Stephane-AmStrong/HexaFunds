@@ -1,12 +1,11 @@
-﻿using DataTransfertObjects;
+﻿using Application.DataTransfertObjects;
+using Application.Services.Abstractions;
 
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Repositories.Abstractions;
 
 using Mapster;
-
-using Services.Abstractions;
 
 namespace Services;
 
