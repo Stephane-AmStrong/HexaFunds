@@ -1,7 +1,5 @@
 using System.Net;
-
-using DataTransfertObjects;
-
+using Application.DataTransfertObjects;
 using Domain.Entities;
 
 using Microsoft.EntityFrameworkCore;
