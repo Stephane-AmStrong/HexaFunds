@@ -18,12 +18,12 @@ public class SavingsAccountsControllerTests : IClassFixture<IntegrationTestWebFa
 {
     private readonly HttpClientRepository _httpClientRepository;
     private readonly IntegrationTestWebFactory _factory;
-    private IEnumerable<SavingsAccount> _savingsAccounts;
+    private IEnumerable<SavingsBehavior> _savingsAccounts;
 
     public SavingsAccountsControllerTests(IntegrationTestWebFactory factory)
     {
         _factory = factory;
-        _savingsAccounts = new List<SavingsAccount>();
+        _savingsAccounts = new List<SavingsBehavior>();
 
         var httpClient = _factory.CreateClient();
         _httpClientRepository = new HttpClientRepository(httpClient, "api/savingsAccounts");
@@ -217,12 +217,12 @@ public class SavingsAccountsControllerTests : IClassFixture<IntegrationTestWebFa
         await dbContext.SaveChangesAsync();
     }
 
-    private async Task<IEnumerable<SavingsAccount>> GetAllSavingsAccountsAsync(BankingDbContext dbContext)
+    private async Task<IEnumerable<SavingsBehavior>> GetAllSavingsAccountsAsync(BankingDbContext dbContext)
     {
         return await dbContext.SavingsAccounts.ToListAsync();
     }
 
-    private async Task<SavingsAccount?> GetSavingsAccountByIdAsync(Guid id)
+    private async Task<SavingsBehavior?> GetSavingsAccountByIdAsync(Guid id)
     {
         await using var scope = _factory.Services.CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<BankingDbContext>();

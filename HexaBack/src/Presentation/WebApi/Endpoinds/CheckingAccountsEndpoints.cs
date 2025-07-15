@@ -1,71 +1,71 @@
-using DataTransfertObjects;
+// using DataTransfertObjects;
 
-using Services.Abstractions;
-using WebApi.Extensions;
+// using Services.Abstractions;
+// using WebApi.Extensions;
 
-namespace WebApi.Endpoinds;
+// namespace WebApi.Endpoinds;
 
-public static class CheckingAccountsEndpoints
-{
+// public static class CheckingAccountsEndpoints
+// {
 
-    public static void MapCheckingAccountsEndpoints(this IEndpointRouteBuilder app)
-    {
-        var group = app.MapGroup("/api/checkingaccounts");
+//     public static void MapCheckingAccountsEndpoints(this IEndpointRouteBuilder app)
+//     {
+//         var group = app.MapGroup("/api/checkingaccounts");
 
-        group.MapGet("/", GetAllCheckingAccounts)
-            .Produces<IList<CheckingAccountResponse>>(StatusCodes.Status200OK);
+//         group.MapGet("/", GetAllCheckingAccounts)
+//             .Produces<IList<CheckingAccountResponse>>(StatusCodes.Status200OK);
 
-        group.MapGet("/{id:guid}", GetCheckingAccountById)
-            .Produces<CheckingAccountResponse>(StatusCodes.Status200OK);
+//         group.MapGet("/{id:guid}", GetCheckingAccountById)
+//             .Produces<CheckingAccountResponse>(StatusCodes.Status200OK);
 
-        group.MapPost("/", CreateCheckingAccount)
-            .WithRequestValidation<CheckingAccountRequest>()
-            .Produces<CheckingAccountResponse>(StatusCodes.Status201Created)
-            .ProducesValidationProblem(StatusCodes.Status400BadRequest);
+//         group.MapPost("/", CreateCheckingAccount)
+//             .WithRequestValidation<CheckingAccountRequest>()
+//             .Produces<CheckingAccountResponse>(StatusCodes.Status201Created)
+//             .ProducesValidationProblem(StatusCodes.Status400BadRequest);
 
-        group.MapDelete("/{id:guid}", DeleteCheckingAccount)
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound);
+//         group.MapDelete("/{id:guid}", DeleteCheckingAccount)
+//             .Produces(StatusCodes.Status204NoContent)
+//             .Produces(StatusCodes.Status404NotFound);
 
-        group.MapPut("/{id:guid}", UpdateCheckingAccount)
-            .WithRequestValidation<CheckingAccountRequest>()
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status404NotFound);
-    }
+//         group.MapPut("/{id:guid}", UpdateCheckingAccount)
+//             .WithRequestValidation<CheckingAccountRequest>()
+//             .Produces(StatusCodes.Status204NoContent)
+//             .Produces(StatusCodes.Status400BadRequest)
+//             .Produces(StatusCodes.Status404NotFound);
+//     }
 
-    // GET /api/checkingaccounts
-    private static IResult GetAllCheckingAccounts(ICheckingAccountService checkingAccountService)
-    {
-        var checkingAccountsResponse = checkingAccountService.GetAll();
-        return Results.Ok(checkingAccountsResponse);
-    }
+//     // GET /api/checkingaccounts
+//     private static IResult GetAllCheckingAccounts(ICheckingAccountService checkingAccountService)
+//     {
+//         var checkingAccountsResponse = checkingAccountService.GetAll();
+//         return Results.Ok(checkingAccountsResponse);
+//     }
 
-    // GET /api/checkingaccounts/{id:guid}
-    private static async Task<IResult> GetCheckingAccountById(ICheckingAccountService checkingAccountService, Guid id, CancellationToken cancellationToken)
-    {
-        var checkingAccountResponse = await checkingAccountService.GetByIdAsync(id, cancellationToken);
-        return Results.Ok(checkingAccountResponse);
-    }
+//     // GET /api/checkingaccounts/{id:guid}
+//     private static async Task<IResult> GetCheckingAccountById(ICheckingAccountService checkingAccountService, Guid id, CancellationToken cancellationToken)
+//     {
+//         var checkingAccountResponse = await checkingAccountService.GetByIdAsync(id, cancellationToken);
+//         return Results.Ok(checkingAccountResponse);
+//     }
 
-    // POST /api/checkingaccounts
-    private static async Task<IResult> CreateCheckingAccount(ICheckingAccountService checkingAccountService, CheckingAccountRequest checkingAccountRequest, CancellationToken cancellationToken)
-    {
-        var checkingAccountResponse = await checkingAccountService.CreateAsync(checkingAccountRequest, cancellationToken);
-        return Results.Created(checkingAccountResponse.Id.ToString(), checkingAccountResponse);
-    }
+//     // POST /api/checkingaccounts
+//     private static async Task<IResult> CreateCheckingAccount(ICheckingAccountService checkingAccountService, CheckingAccountRequest checkingAccountRequest, CancellationToken cancellationToken)
+//     {
+//         var checkingAccountResponse = await checkingAccountService.CreateAsync(checkingAccountRequest, cancellationToken);
+//         return Results.Created(checkingAccountResponse.Id.ToString(), checkingAccountResponse);
+//     }
 
-    // DELETE /api/checkingaccounts/{id:guid}
-    private static async Task<IResult> DeleteCheckingAccount(ICheckingAccountService checkingAccountService, Guid id, CancellationToken cancellationToken)
-    {
-        await checkingAccountService.DeleteAsync(id, cancellationToken);
-        return Results.NoContent();
-    }
+//     // DELETE /api/checkingaccounts/{id:guid}
+//     private static async Task<IResult> DeleteCheckingAccount(ICheckingAccountService checkingAccountService, Guid id, CancellationToken cancellationToken)
+//     {
+//         await checkingAccountService.DeleteAsync(id, cancellationToken);
+//         return Results.NoContent();
+//     }
 
-    // PUT /api/checkingaccounts/{id:guid}
-    private static async Task<IResult> UpdateCheckingAccount(ICheckingAccountService checkingAccountService, Guid id, CheckingAccountRequest checkingAccountRequest, CancellationToken cancellationToken)
-    {
-        await checkingAccountService.UpdateAsync(id, checkingAccountRequest, cancellationToken);
-        return Results.NoContent();
-    }
-}
+//     // PUT /api/checkingaccounts/{id:guid}
+//     private static async Task<IResult> UpdateCheckingAccount(ICheckingAccountService checkingAccountService, Guid id, CheckingAccountRequest checkingAccountRequest, CancellationToken cancellationToken)
+//     {
+//         await checkingAccountService.UpdateAsync(id, checkingAccountRequest, cancellationToken);
+//         return Results.NoContent();
+//     }
+// }

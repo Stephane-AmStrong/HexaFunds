@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence;
+using Persistence.Configurations;
 
 #nullable disable
 
@@ -28,6 +29,10 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<AccountBehaviorData>("AccountBehavior")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
                     b.Property<string>("AccountNumber")
                         .IsRequired()
                         .HasColumnType("text");
@@ -35,18 +40,9 @@ namespace Persistence.Migrations
                     b.Property<float>("Balance")
                         .HasColumnType("real");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("character varying(21)");
-
                     b.HasKey("Id");
 
-                    b.ToTable("BankAccount");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("BankAccount");
-
-                    b.UseTphMappingStrategy();
+                    b.ToTable("BankAccounts");
                 });
 
             modelBuilder.Entity("Domain.Entities.Transaction", b =>
@@ -72,26 +68,6 @@ namespace Persistence.Migrations
                     b.HasIndex("AccountId");
 
                     b.ToTable("Transactions");
-                });
-
-            modelBuilder.Entity("Domain.Entities.CheckingAccount", b =>
-                {
-                    b.HasBaseType("Domain.Entities.BankAccount");
-
-                    b.Property<float>("OverdraftLimit")
-                        .HasColumnType("real");
-
-                    b.HasDiscriminator().HasValue("CheckingAccount");
-                });
-
-            modelBuilder.Entity("Domain.Entities.SavingsAccount", b =>
-                {
-                    b.HasBaseType("Domain.Entities.BankAccount");
-
-                    b.Property<float>("BalanceCeiling")
-                        .HasColumnType("real");
-
-                    b.HasDiscriminator().HasValue("SavingsAccount");
                 });
 
             modelBuilder.Entity("Domain.Entities.Transaction", b =>

@@ -1,7 +1,7 @@
-﻿using DataTransfertObjects;
+﻿using Application.DataTransfertObjects;
 using FluentValidation;
 
-namespace Validators;
+namespace WebApi.Validators;
 
 public class SavingsAccountValidator : AbstractValidator<SavingsAccountRequest>
 {

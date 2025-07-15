@@ -3,7 +3,9 @@ using System.Linq.Expressions;
 using DataTransfertObjects;
 
 using Domain.Entities;
-using Domain.Exceptions;
+using Domain.Enumerations;
+using Domain.Errors;
+using Domain.Errors;
 using Domain.Repositories.Abstractions;
 
 using Moq;
@@ -67,7 +69,7 @@ public class TransactionServiceTest
                 Id = Guid.NewGuid(),
                 Amount = 700,
                 Date = new DateTime(2024, 6, 9),
-                Type = BankAccount.Core.Enumerations.TransactionType.Credit,
+                Type = Domain.Enumerations.TransactionType.Credit,
                 AccountId = _accounts[0].Id,
                 BankAccount = _accounts[0],
             },
@@ -76,7 +78,7 @@ public class TransactionServiceTest
                 Id = Guid.NewGuid(),
                 Amount = 500,
                 Date = new DateTime(2024, 5, 18),
-                Type = BankAccount.Core.Enumerations.TransactionType.Debit,
+                Type = Domain.Enumerations.TransactionType.Debit,
                 AccountId = _accounts[0].Id,
                 BankAccount = _accounts[0],
             },
@@ -85,7 +87,7 @@ public class TransactionServiceTest
                 Id = Guid.NewGuid(),
                 Amount = 100,
                 Date = new DateTime(2024, 6, 7),
-                Type = BankAccount.Core.Enumerations.TransactionType.Credit,
+                Type = Domain.Enumerations.TransactionType.Credit,
                 AccountId = _accounts[1].Id,
                 BankAccount = _accounts[1],
             },
@@ -94,7 +96,7 @@ public class TransactionServiceTest
                 Id = Guid.NewGuid(),
                 Amount = 300,
                 Date = new DateTime(2024, 6, 15),
-                Type = BankAccount.Core.Enumerations.TransactionType.Debit,
+                Type = Domain.Enumerations.TransactionType.Debit,
                 AccountId = _accounts[1].Id,
                 BankAccount = _accounts[1],
             },
@@ -103,7 +105,7 @@ public class TransactionServiceTest
                 Id = Guid.NewGuid(),
                 Amount = 200,
                 Date = new DateTime(2024, 6, 29),
-                Type = BankAccount.Core.Enumerations.TransactionType.Debit,
+                Type = Domain.Enumerations.TransactionType.Debit,
                 AccountId = _accounts[0].Id,
                 BankAccount = _accounts[0],
             },
@@ -132,7 +134,7 @@ public class TransactionServiceTest
         _mockTransactionRepository.Setup(r => r.CreateAsync(transaction, _cancellationToken))
                                       .Returns(Task.CompletedTask);
 
-        _mockCheckingAccountRepository.Setup(r => r.Update((CheckingAccount)_accounts[0]));
+        _mockCheckingAccountRepository.Setup(r => r.Update((CheckingBehavior)_accounts[0]));
 
         _mockUnitOfWork.Setup(u => u.SaveChangesAsync(_cancellationToken))
                        .ReturnsAsync(1);
@@ -144,7 +146,7 @@ public class TransactionServiceTest
 
         _mockBankAccountRepository.Verify(r => r.GetByIdAsync(request.AccountId, _cancellationToken), Times.Once);
         _mockTransactionRepository.Verify(r => r.CreateAsync(It.IsAny<Transaction>(), _cancellationToken), Times.Once);
-        _mockCheckingAccountRepository.Verify(r => r.Update(It.IsAny<CheckingAccount>()), Times.Once);
+        _mockCheckingAccountRepository.Verify(r => r.Update(It.IsAny<CheckingBehavior>()), Times.Once);
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(_cancellationToken), Times.Once);
 
         Assert.NotNull(response);
@@ -176,7 +178,7 @@ public class TransactionServiceTest
         _mockTransactionRepository.Setup(r => r.CreateAsync(It.IsAny<Transaction>(), _cancellationToken))
                                       .Returns(Task.CompletedTask);
 
-        _mockSavingsAccountRepository.Setup(r => r.Update(It.IsAny<SavingsAccount>()));
+        _mockSavingsAccountRepository.Setup(r => r.Update(It.IsAny<SavingsBehavior>()));
 
         _mockUnitOfWork.Setup(u => u.SaveChangesAsync(_cancellationToken))
                        .ReturnsAsync(1);
@@ -188,7 +190,7 @@ public class TransactionServiceTest
 
         _mockBankAccountRepository.Verify(r => r.GetByIdAsync(request.AccountId, _cancellationToken), Times.Once);
         _mockTransactionRepository.Verify(r => r.CreateAsync(It.IsAny<Transaction>(), _cancellationToken), Times.Once);
-        _mockSavingsAccountRepository.Verify(r => r.Update(It.IsAny<SavingsAccount>()), Times.Once);
+        _mockSavingsAccountRepository.Verify(r => r.Update(It.IsAny<SavingsBehavior>()), Times.Once);
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(_cancellationToken), Times.Once);
 
         Assert.NotNull(response);
@@ -209,7 +211,7 @@ public class TransactionServiceTest
             AccountId = _accounts[0].Id,
         };
 
-        var checkingAccount = (CheckingAccount)_accounts[0];
+        var checkingAccount = (CheckingBehavior)_accounts[0];
 
         _mockBankAccountRepository.Setup(r => r.GetByIdAsync(transactionRequest.AccountId, _cancellationToken))
                                       .ReturnsAsync(checkingAccount);
@@ -230,7 +232,7 @@ public class TransactionServiceTest
             AccountId = _accounts[1].Id
         };
 
-        var savingsAccount = (SavingsAccount)_accounts[1];
+        var savingsAccount = (SavingsBehavior)_accounts[1];
 
         _mockBankAccountRepository.Setup(r => r.GetByIdAsync(transactionRequest.AccountId, _cancellationToken))
                                       .ReturnsAsync(savingsAccount);
@@ -251,7 +253,7 @@ public class TransactionServiceTest
             AccountId = _accounts[1].Id
         };
 
-        var savingsAccount = (SavingsAccount)_accounts[1];
+        var savingsAccount = (SavingsBehavior)_accounts[1];
 
         _mockBankAccountRepository.Setup(r => r.GetByIdAsync(transactionRequest.AccountId, _cancellationToken))
                                       .ReturnsAsync(savingsAccount);

@@ -1,12 +1,18 @@
 ﻿using System.Text.Json.Serialization;
+using System.Threading.Channels;
+using Application.DataTransfertObjects;
+using Application.Messagin.Abstractions;
+using Application.Services.Abstractions;
+using Application.UseCases;
 using Domain.Repositories.Abstractions;
+using Messaging.Channels;
+using Messaging.Internals;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using Persistence.Repository;
 using Services;
-using Services.Abstractions;
 using WebApi.Middleware;
 
 namespace WebApi.Extensions;
@@ -35,17 +41,26 @@ public static class ServiceCollectionExtensions
     public static void ConfigureBankingRepositories(this IServiceCollection services)
     {
         services.AddScoped<IBankAccountRepository, BankAccountRepository>();
-        services.AddScoped<ICheckingAccountRepository, CheckingAccountRepository>();
-        services.AddScoped<ISavingsAccountRepository, SavingsAccountRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
     }
 
     public static void ConfigureBankingServices(this IServiceCollection services)
     {
-        services.AddScoped<ICheckingAccountService, CheckingAccountService>();
-        services.AddScoped<ISavingsAccountService, SavingsAccountService>();
+        services.AddScoped<IBankAccountService, BankAccountService>();
         services.AddScoped<ITransactionService, TransactionService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+    }
+
+    public static void ConfigureCommandProcessor(this IServiceCollection services)
+    {
+        services.AddSingleton(Channel.CreateUnbounded<ICommandWrapper>());
+        services.AddSingleton<ICommandDispatcher, CommandDispatcher>();
+        services.AddHostedService<CommandProcessor>();
+    }
+
+    public static void ConfigureHandler(this IServiceCollection services)
+    {
+        services.AddScoped<ICommandHandler<CreateCheckingAccountCommand, CheckingAccountResponse>, CreateCheckingAccountHandler>();
     }
 
 

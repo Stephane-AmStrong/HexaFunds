@@ -1,7 +1,5 @@
-using BankAccount.Core.Enumerations;
-
 using Domain.Entities;
-
+using Domain.Enumerations;
 using Microsoft.EntityFrameworkCore;
 
 using Persistence.Repository;

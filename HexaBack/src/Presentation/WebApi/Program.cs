@@ -1,11 +1,10 @@
 using AspNetCore.Swagger.Themes;
-using DataTransfertObjects;
 using FluentValidation;
 using WebApi.Endpoinds;
 using WebApi.Extensions;
 using WebApi.Middleware;
 
-using WebApplicationDocker.Endpoints;
+// using WebApplicationDocker.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +16,8 @@ builder.Services.ConfigureJsonOptions();
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureBankingRepositories();
 builder.Services.ConfigureBankingServices();
+builder.Services.ConfigureCommandProcessor();
+builder.Services.ConfigureHandler();
 builder.Services.ConfigureGlobalExceptionHandling();
 
 builder.Services.AddHealthChecks();
@@ -37,9 +38,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("CorsPolicy");
 
-app.MapCheckingAccountsEndpoints();
-app.MapSavingsAccountsEndpoints();
-app.MapTransactionsEndpoints();
+app.MapBankAccountsEndpoints();
+// app.MapTransactionsEndpoints();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 

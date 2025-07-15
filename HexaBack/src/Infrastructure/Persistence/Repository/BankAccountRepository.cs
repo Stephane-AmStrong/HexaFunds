@@ -1,14 +1,35 @@
-﻿using Domain.Repositories.Abstractions;
+﻿using Domain.Entities;
+using Domain.Repositories.Abstractions;
 
 using Microsoft.EntityFrameworkCore;
 namespace Persistence.Repository;
 
 public sealed class BankAccountRepository(BankingDbContext dbContext) : RepositoryBase<Domain.Entities.BankAccount>(dbContext), IBankAccountRepository
 {
-    public async Task<Domain.Entities.BankAccount?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public Task CreateAsync(BankAccount bankAccount, CancellationToken cancellationToken)
     {
-        return await BaseFindByCondition(checkingAccount => checkingAccount.Id.Equals(id))
+        return BaseCreateAsync(bankAccount, cancellationToken);
+    }
+
+    public void Delete(BankAccount bankAccount)
+    {
+        BaseDelete(bankAccount);
+    }
+
+    public IList<BankAccount> GetAll()
+    {
+        return [.. BaseGetAll()];
+    }
+
+    public Task<BankAccount?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return BaseFindByCondition(bankAccount => bankAccount.Id.Equals(id))
             .Include(x => x.Transactions)
             .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public void Update(BankAccount bankAccount)
+    {
+        BaseUpdate(bankAccount);
     }
 }

@@ -3,7 +3,7 @@ using System.Net;
 using DataTransfertObjects;
 
 using Domain.Entities;
-
+using Domain.Enumerations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,7 +19,7 @@ public class TransactionsControllerTests : IClassFixture<IntegrationTestWebFacto
     private readonly HttpClientRepository _httpClientRepository;
     private readonly IntegrationTestWebFactory _factory;
     private IEnumerable<Transaction> _transactions;
-    private CheckingAccount? _checkingAccount;
+    private CheckingBehavior? _checkingAccount;
     private Guid _accountId;
     private string _requestUri;
 
@@ -148,8 +148,8 @@ public class TransactionsControllerTests : IClassFixture<IntegrationTestWebFacto
 
         var transactions = new[]
         {
-            new Transaction { Id = Guid.NewGuid(), Amount = 100, Date = DateTime.SpecifyKind(new DateTime(2024, 6, 4), DateTimeKind.Utc), Type = BankAccount.Core.Enumerations.TransactionType.Credit, AccountId = bankAccount.Id, BankAccount = bankAccount },
-            new Transaction { Id = Guid.NewGuid(), Amount = 200, Date = DateTime.SpecifyKind(new DateTime(2024, 6, 9), DateTimeKind.Utc), Type = BankAccount.Core.Enumerations.TransactionType.Debit, AccountId = bankAccount.Id, BankAccount = bankAccount },
+            new Transaction { Id = Guid.NewGuid(), Amount = 100, Date = DateTime.SpecifyKind(new DateTime(2024, 6, 4), DateTimeKind.Utc), Type = Domain.Enumerations.TransactionType.Credit, AccountId = bankAccount.Id, BankAccount = bankAccount },
+            new Transaction { Id = Guid.NewGuid(), Amount = 200, Date = DateTime.SpecifyKind(new DateTime(2024, 6, 9), DateTimeKind.Utc), Type = Domain.Enumerations.TransactionType.Debit, AccountId = bankAccount.Id, BankAccount = bankAccount },
         };
 
         await dbContext.CheckingAccounts.AddAsync(bankAccount);
@@ -170,7 +170,7 @@ public class TransactionsControllerTests : IClassFixture<IntegrationTestWebFacto
         return dbContext.Transactions.FirstOrDefault(account => account.Id == id);
     }
 
-    private async Task<CheckingAccount?> GetBanckAccountByIdAsync(Guid id)
+    private async Task<CheckingBehavior?> GetBanckAccountByIdAsync(Guid id)
     {
         await using var scope = _factory.Services.CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<BankingDbContext>();

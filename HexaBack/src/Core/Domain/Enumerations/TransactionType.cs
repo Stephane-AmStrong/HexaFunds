@@ -1,4 +1,4 @@
-﻿namespace BankAccount.Core.Enumerations;
+﻿namespace Domain.Enumerations;
 
 public enum TransactionType
 {

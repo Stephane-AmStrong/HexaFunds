@@ -1,7 +1,7 @@
 using DataTransfertObjects;
 
 using Domain.Entities;
-using Domain.Exceptions;
+using Domain.Errors;
 using Domain.Repositories.Abstractions;
 
 using Moq;
@@ -15,7 +15,7 @@ public class CheckingAccountServiceTest
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly CheckingAccountService _checkingAccountService;
     private readonly CancellationToken _cancellationToken;
-    private readonly List<CheckingAccount> _checkingAccounts;
+    private readonly List<CheckingBehavior> _checkingAccounts;
 
     public CheckingAccountServiceTest()
     {
@@ -63,7 +63,7 @@ public class CheckingAccountServiceTest
             AccountNumber = _checkingAccounts[0].AccountNumber
         };
 
-        _mockCheckingAccountRepository.Setup(r => r.CreateAsync(It.IsAny<CheckingAccount>(), _cancellationToken))
+        _mockCheckingAccountRepository.Setup(r => r.CreateAsync(It.IsAny<CheckingBehavior>(), _cancellationToken))
                                       .Returns(Task.CompletedTask);
 
         _mockCheckingAccountRepository.Setup(r => r.GetByIdAsync(It.IsAny<Guid>(), _cancellationToken))
@@ -76,7 +76,7 @@ public class CheckingAccountServiceTest
         var response = await _checkingAccountService.CreateAsync(request, _cancellationToken);
 
         // Assert
-        _mockCheckingAccountRepository.Verify(r => r.CreateAsync(It.IsAny<CheckingAccount>(), _cancellationToken), Times.Once);
+        _mockCheckingAccountRepository.Verify(r => r.CreateAsync(It.IsAny<CheckingBehavior>(), _cancellationToken), Times.Once);
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(_cancellationToken), Times.Once);
 
         Assert.NotNull(response);
@@ -119,13 +119,13 @@ public class CheckingAccountServiceTest
         var accountId = Guid.NewGuid();
 
         _mockCheckingAccountRepository.Setup(r => r.GetByIdAsync(accountId, _cancellationToken))
-                                      .ReturnsAsync((CheckingAccount?)null);
+                                      .ReturnsAsync((CheckingBehavior?)null);
 
         // Act & Assert
         await Assert.ThrowsAsync<AccountNotFoundException>(() => _checkingAccountService.DeleteAsync(accountId, _cancellationToken));
 
         _mockCheckingAccountRepository.Verify(r => r.GetByIdAsync(accountId, _cancellationToken), Times.Once);
-        _mockCheckingAccountRepository.Verify(r => r.Delete(It.IsAny<CheckingAccount>()), Times.Never);
+        _mockCheckingAccountRepository.Verify(r => r.Delete(It.IsAny<CheckingBehavior>()), Times.Never);
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(_cancellationToken), Times.Never);
     }
 
@@ -178,7 +178,7 @@ public class CheckingAccountServiceTest
         var accountId = Guid.NewGuid();
 
         _mockCheckingAccountRepository.Setup(r => r.GetByIdAsync(accountId, _cancellationToken))
-                                        .ReturnsAsync((CheckingAccount?)null);
+                                        .ReturnsAsync((CheckingBehavior?)null);
 
         // Act & Assert
         await Assert.ThrowsAsync<AccountNotFoundException>(() => _checkingAccountService.GetByIdAsync(accountId, _cancellationToken));
@@ -235,13 +235,13 @@ public class CheckingAccountServiceTest
         };
 
         _mockCheckingAccountRepository.Setup(r => r.GetByIdAsync(accountId, _cancellationToken))
-                                        .ReturnsAsync((CheckingAccount?)null);
+                                        .ReturnsAsync((CheckingBehavior?)null);
 
         // Act & Assert
         await Assert.ThrowsAsync<AccountNotFoundException>(() => _checkingAccountService.UpdateAsync(accountId, request, _cancellationToken));
 
         _mockCheckingAccountRepository.Verify(r => r.GetByIdAsync(accountId, _cancellationToken), Times.Once);
-        _mockCheckingAccountRepository.Verify(r => r.Update(It.IsAny<CheckingAccount>()), Times.Never);
+        _mockCheckingAccountRepository.Verify(r => r.Update(It.IsAny<CheckingBehavior>()), Times.Never);
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(_cancellationToken), Times.Never);
     }
 
