@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Application.Services.Abstractions;
 using Domain.Repositories.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +7,6 @@ using Microsoft.OpenApi.Models;
 using Persistence;
 using Persistence.Repository;
 using Services;
-using Services.Abstractions;
 using WebApi.Middleware;
 
 namespace WebApi.Extensions;

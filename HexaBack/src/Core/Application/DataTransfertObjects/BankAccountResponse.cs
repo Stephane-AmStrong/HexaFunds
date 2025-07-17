@@ -1,4 +1,6 @@
-﻿namespace DataTransfertObjects
+﻿using Application.DataTransfertObjects;
+
+namespace DataTransfertObjects
 {
     public record BankAccountResponse : BankAccountRequest
     {

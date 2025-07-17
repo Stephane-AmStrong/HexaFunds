@@ -1,6 +1,5 @@
-using DataTransfertObjects;
-
-using Services.Abstractions;
+using Application.DataTransfertObjects;
+using Application.Services.Abstractions;
 using WebApi.Extensions;
 
 namespace WebApplicationDocker.Endpoints;

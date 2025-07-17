@@ -1,9 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-using DataTransfertObjects;
+﻿using Application.DataTransfertObjects;
 using FluentValidation;
 
-namespace Validators;
+namespace WebApi.Validators;
 
 public class TransactionValidator : AbstractValidator<TransactionRequest>
 {
