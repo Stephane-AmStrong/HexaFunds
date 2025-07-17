@@ -84,11 +84,33 @@ public static class ServiceCollectionExtensions
     {
         if (!application.Environment.IsEnvironment("Testing"))
         {
-            using (var scope = application.Services.CreateScope())
+            int retries = 5;
+            int retryDelay = 5; // seconds
+
+            for (int i = 0; i < retries; i++)
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<BankingDbContext>();
-                dbContext.Database.Migrate();
+                try
+                {
+                    using (var scope = application.Services.CreateScope())
+                    {
+                        var dbContext = scope.ServiceProvider.GetRequiredService<BankingDbContext>();
+                        dbContext.Database.Migrate();
+                    }
+                    Console.WriteLine("Database migration successful");
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Database migration attempt {i + 1}/{retries} failed: {ex.Message}");
+                    if (i < retries - 1)
+                    {
+                        Console.WriteLine($"Retrying in {retryDelay} seconds...");
+                        Thread.Sleep(retryDelay * 1000);
+                    }
+                }
             }
+
+            throw new Exception($"Database migration failed after {retries} attempts");
         }
     }
 
