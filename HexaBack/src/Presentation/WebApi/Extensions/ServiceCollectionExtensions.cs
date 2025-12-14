@@ -1,6 +1,10 @@
 ﻿using System.Text.Json.Serialization;
-using Application.Services.Abstractions;
-using Domain.Repositories.Abstractions;
+using Application.Abstractions.Services;
+using Application.UseCases.CheckingAccounts.Create;
+using Application.UseCases.CheckingAccounts.Delete;
+using Application.UseCases.CheckingAccounts.Update;
+using Domain.Abstractions.Repositories;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -13,18 +17,15 @@ namespace WebApi.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void ConfigureCors(this IServiceCollection services)
+    public static void ConfigureCors(this IServiceCollection services, IConfiguration configuration)
     {
+        string[] allowedOrigins = configuration.GetSection("CorsSettings:AllowedOrigins").Get<string[]>() ?? [];
+
         services.AddCors(options =>
         {
             options.AddPolicy("CorsPolicy", builder =>
             {
-                builder.WithOrigins(
-                    "http://localhost:4200",
-                    "https://localhost:4200",
-                    "http://localhost:5173",
-                    "https://localhost:5173"
-                )
+                builder.WithOrigins(allowedOrigins)
                 .AllowAnyHeader()
                 .AllowAnyMethod();
             });
@@ -32,22 +33,28 @@ public static class ServiceCollectionExtensions
         });
     }
 
-    public static void ConfigureBankingRepositories(this IServiceCollection services)
+    public static void ConfigureRepositories(this IServiceCollection services)
     {
-        services.AddScoped<IBankAccountRepository, BankAccountRepository>();
-        services.AddScoped<ICheckingAccountRepository, CheckingAccountRepository>();
-        services.AddScoped<ISavingsAccountRepository, SavingsAccountRepository>();
-        services.AddScoped<ITransactionRepository, TransactionRepository>();
+        services.AddScoped<IBankAccountsRepository, BankAccountsRepository>();
+        services.AddScoped<ICheckingAccountsRepository, CheckingAccountsRepository>();
+        services.AddScoped<ISavingsAccountsRepository, SavingsAccountsRepository>();
+        services.AddScoped<ITransactionsRepository, TransactionsRepository>();
     }
 
-    public static void ConfigureBankingServices(this IServiceCollection services)
+    public static void ConfigureServices(this IServiceCollection services)
     {
-        services.AddScoped<ICheckingAccountService, CheckingAccountService>();
-        services.AddScoped<ISavingsAccountService, SavingsAccountService>();
-        services.AddScoped<ITransactionService, TransactionService>();
+        services.AddScoped<ICheckingAccountsService, CheckingAccountsService>();
+        services.AddScoped<ISavingsAccountsService, SavingsAccountsService>();
+        // services.AddScoped<ITransactionsService, TransactionsService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 
+    public static void ConfigureValidation(this IServiceCollection services)
+    {
+        services.AddScoped<IValidator<CreateCheckingAccountCommand>, CreateCheckingAccountValidator>();
+        services.AddScoped<IValidator<UpdateCheckingAccountCommand>, UpdateCheckingAccountValidator>();
+        services.AddScoped<IValidator<DeleteCheckingAccountCommand>, DeleteCheckingAccountValidator>();
+    }
 
     public static void ConfigureSwagger(this IServiceCollection services)
     {

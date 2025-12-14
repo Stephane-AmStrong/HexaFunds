@@ -18,7 +18,7 @@ import {
 } from '../checking-account-dialog/checking-account-dialog.component';
 import { Router } from '@angular/router';
 import { CheckingAccountRequest } from '../../../models/checking-account-request';
-import { CheckingAccountService } from '../../../services/checking-account.service';
+import { CheckingAccountsService } from '../../../services/checking-account.service';
 import { openTransactionDialog } from '../../transaction/transaction-dialog/transaction-dialog.component';
 import { TransactionService } from '../../../services/transaction.service';
 import { TransactionRequest } from '../../../models/transaction-request';
@@ -46,7 +46,7 @@ export class CheckingAccountDetailComponent {
   private router = inject(Router);
   private dialog = inject(MatDialog);
 
-  private checkingAccountService = inject(CheckingAccountService);
+  private checkingAccountsService = inject(CheckingAccountsService);
   private transactionService = inject(TransactionService);
 
   checkingAccount = model.required<CheckingAccountResponse>();
@@ -88,7 +88,7 @@ export class CheckingAccountDetailComponent {
 
   save(checkingAccountRequest: CheckingAccountRequest) {
     if (checkingAccountRequest.id) {
-      this.checkingAccountService
+      this.checkingAccountsService
         .update(checkingAccountRequest.id, checkingAccountRequest)
         .subscribe(() =>
           this.checkingAccount.set({
@@ -101,7 +101,7 @@ export class CheckingAccountDetailComponent {
 
   delete(checkingAccountRequest: CheckingAccountRequest) {
     if (checkingAccountRequest.id) {
-      this.checkingAccountService
+      this.checkingAccountsService
         .delete(checkingAccountRequest.id)
         .subscribe(() => this.router.navigate(['/checking-accounts']));
     }

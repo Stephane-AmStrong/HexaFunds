@@ -1,0 +1,10 @@
+{
+    "ConnectionStrings": {
+        "MongoDB": "mongodb://mas_dev_rw:N0FweqIQ@masmdbdev.pld.infrasys16.com:27017",
+        "DatabaseName": "mas_dev"
+    },
+    "SharedFilePaths": {
+        "McsTeamConfig": "//D12.tes.local/AFS/MCS/DEV/env/config/mcs.json",
+        "McsConfigFlat": "//D12.tes.local/AFS/MCS/DEV/env/config/environment-flat.json"
+    }
+}

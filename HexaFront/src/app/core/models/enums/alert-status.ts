@@ -1,0 +1,1 @@
+export type AlertStatus = "Active" | "Muted" | "Resolved" | "Assigned";

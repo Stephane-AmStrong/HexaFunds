@@ -9,7 +9,7 @@ namespace Persistence.Test;
 public class SavingsAccountRepositoryTests : IDisposable
 {
     private readonly DbContextOptions<BankingDbContext> _dbContextOptions;
-    private readonly SavingsAccountRepository _savingsAccountRepository;
+    private readonly SavingsAccountsRepository _savingsAccountRepository;
     private readonly BankingDbContext _context;
     private readonly SavingsAccount _savingsAccount1;
     private readonly SavingsAccount _savingsAccount2;
@@ -21,7 +21,7 @@ public class SavingsAccountRepositoryTests : IDisposable
             .Options;
         _context = new BankingDbContext(_dbContextOptions);
 
-        _savingsAccountRepository = new SavingsAccountRepository(_context);
+        _savingsAccountRepository = new SavingsAccountsRepository(_context);
 
         _savingsAccount1 = new SavingsAccount { Id = Guid.NewGuid(), AccountNumber = "FR_87654321", Balance = 1000 };
         _savingsAccount2 = new SavingsAccount { Id = Guid.NewGuid(), AccountNumber = "EN_39065432", Balance = 2000 };

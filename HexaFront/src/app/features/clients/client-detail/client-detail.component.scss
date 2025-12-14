@@ -1,0 +1,22 @@
+header,
+.header-label {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+}
+
+mat-list {
+  display: flex;
+  flex-direction: row;
+
+  mat-list-item {
+    flex: 1;
+  }
+}
+
+p,
+prefix-pictogram {
+  display: block;
+  margin-left: 1rem;
+}

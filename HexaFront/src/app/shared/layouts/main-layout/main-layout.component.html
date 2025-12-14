@@ -1,0 +1,38 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+    [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
+    <mat-toolbar>Menu</mat-toolbar>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/dashboard" routerLinkActive="mdc-list-item--activated">
+        <mat-icon matListItemIcon>dashboard</mat-icon>
+        <span matListItemTitle>Dashboard</span>
+      </a>
+      <a mat-list-item routerLink="/hosts" [queryParams]="hostQueryParams" routerLinkActive="mdc-list-item--activated">
+        <mat-icon matListItemIcon>domain</mat-icon>
+        <span matListItemTitle>Hosts</span>
+      </a>
+      <a mat-list-item routerLink="/servers" [queryParams]="serverQueryParams" routerLinkActive="mdc-list-item--activated">
+        <mat-icon matListItemIcon>dns</mat-icon>
+        <span matListItemTitle>Applications</span>
+      </a>
+      <a mat-list-item routerLink="/clients" routerLinkActive="mdc-list-item--activated">
+        <mat-icon matListItemIcon>computer</mat-icon>
+        <span matListItemTitle>Clients</span>
+      </a>
+      <a mat-list-item routerLink="/connections" routerLinkActive="mdc-list-item--activated">
+        <mat-icon matListItemIcon>link</mat-icon>
+        <span matListItemTitle>Connections</span>
+      </a>
+      <a mat-list-item routerLink="/alerts" routerLinkActive="mdc-list-item--activated">
+        <mat-icon matListItemIcon>warning</mat-icon>
+        <span matListItemTitle>Alerts</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+
+    <!-- page content -->
+    <ng-content></ng-content>
+
+  </mat-sidenav-content>
+</mat-sidenav-container>

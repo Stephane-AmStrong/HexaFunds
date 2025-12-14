@@ -1,0 +1,10 @@
+{
+    "AssignmentTeamConfig": {
+        "TeamsConnectorConfiguration": {
+            "Enabled": "true",
+            "WebHook": "https://engie.webhook.office.com/webhookb2/c8f5f97f-0fc2-48e6-904d-e56abdd20f3a@24139d14-c62c-4c47-8bdd-ce71ea1d50cf/IncomingWebhook/c2f575e91d9d4fbaa0ac1dfbb0ad35f7/7e3e8cfd-cb11-48a3-bbba-f21e9d0e9d8a/V2IC9LIwZYsV_V5FZ8h5TVWDccweQBcT8exKdLtvSzTcY1"
+        },
+        "Subject": "Alert Assignment",
+        "Environment": "DEV"
+    }
+}

@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities;
 
-public abstract class BankAccount
+public abstract class BankAccount : IBaseEntity
 {
     public BankAccount()
     {

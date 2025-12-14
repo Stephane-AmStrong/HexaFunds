@@ -1,5 +1,4 @@
-﻿using Application.DataTransfertObjects;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace WebApi.Validators;
 

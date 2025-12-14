@@ -1,0 +1,28 @@
+<toolbar />
+
+<main class="dashboard-container">
+  <h1 class="mat-h1">Dashboard</h1>
+  <mat-grid-list cols="64" rowHeight="25rem" gutterSize="1rem">
+    @let layouts = dashboardLayout | async;
+
+    <mat-grid-tile [colspan]="layouts?.[0]?.cols" [rowspan]="layouts?.[0]?.rows">
+      <mat-grid-tile-header>Problems</mat-grid-tile-header>
+      <section-monitoring-overview />
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="layouts?.[1]?.cols" [rowspan]="layouts?.[1]?.rows">
+      <mat-grid-tile-header>Services</mat-grid-tile-header>
+      <section-services />
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="layouts?.[2]?.cols" [rowspan]="layouts?.[2]?.rows">
+      <mat-grid-tile-header>Applications</mat-grid-tile-header>
+      <section-applications />
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="layouts?.[3]?.cols" [rowspan]="layouts?.[3]?.rows">
+      <mat-grid-tile-header>Infrastructure</mat-grid-tile-header>
+      <section-infrastructure />
+    </mat-grid-tile>
+  </mat-grid-list>
+</main>

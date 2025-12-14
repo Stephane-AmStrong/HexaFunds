@@ -1,7 +1,8 @@
 using Application.DataTransfertObjects;
+using Domain.Abstractions.Repositories;
 using Domain.Entities;
-using Domain.Exceptions;
-using Domain.Repositories.Abstractions;
+using Domain.Errors;
+using Domain.Abstractions.Repositories;
 using Moq;
 using Services;
 namespace Service.Test;
@@ -9,7 +10,7 @@ namespace Service.Test;
 public class TransactionServiceTest
 {
     private readonly Mock<ITransactionRepository> _mockTransactionRepository;
-    private readonly Mock<ICheckingAccountRepository> _mockCheckingAccountRepository;
+    private readonly Mock<ICheckingAccountsRepository> _mockCheckingAccountsRepository;
     private readonly Mock<ISavingsAccountRepository> _mockSavingsAccountRepository;
     private readonly Mock<IBankAccountRepository> _mockBankAccountRepository;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
@@ -22,7 +23,7 @@ public class TransactionServiceTest
     public TransactionServiceTest()
     {
         _mockTransactionRepository = new Mock<ITransactionRepository>();
-        _mockCheckingAccountRepository = new Mock<ICheckingAccountRepository>();
+        _mockCheckingAccountsRepository = new Mock<ICheckingAccountsRepository>();
         _mockSavingsAccountRepository = new Mock<ISavingsAccountRepository>();
         _mockBankAccountRepository = new Mock<IBankAccountRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
@@ -31,7 +32,7 @@ public class TransactionServiceTest
         _transactionService = new TransactionService
         (
             _mockTransactionRepository.Object,
-            _mockCheckingAccountRepository.Object,
+            _mockCheckingAccountsRepository.Object,
             _mockSavingsAccountRepository.Object,
             _mockBankAccountRepository.Object,
             _mockUnitOfWork.Object
@@ -127,7 +128,7 @@ public class TransactionServiceTest
         _mockTransactionRepository.Setup(r => r.CreateAsync(transaction, _cancellationToken))
                                       .Returns(Task.CompletedTask);
 
-        _mockCheckingAccountRepository.Setup(r => r.Update((CheckingAccount)_accounts[0]));
+        _mockCheckingAccountsRepository.Setup(r => r.Update((CheckingAccount)_accounts[0]));
 
         _mockUnitOfWork.Setup(u => u.SaveChangesAsync(_cancellationToken))
                        .ReturnsAsync(1);
@@ -139,7 +140,7 @@ public class TransactionServiceTest
 
         _mockBankAccountRepository.Verify(r => r.GetByIdAsync(request.AccountId, _cancellationToken), Times.Once);
         _mockTransactionRepository.Verify(r => r.CreateAsync(It.IsAny<Transaction>(), _cancellationToken), Times.Once);
-        _mockCheckingAccountRepository.Verify(r => r.Update(It.IsAny<CheckingAccount>()), Times.Once);
+        _mockCheckingAccountsRepository.Verify(r => r.Update(It.IsAny<CheckingAccount>()), Times.Once);
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(_cancellationToken), Times.Once);
 
         Assert.NotNull(response);

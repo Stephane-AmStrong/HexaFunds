@@ -1,0 +1,65 @@
+<table mat-table [dataSource]="dataSource()">
+
+    <!-- HostName Column -->
+    <ng-container matColumnDef="hostName">
+        <th mat-header-cell *matHeaderCellDef>Host Name</th>
+        <th mat-header-cell *matCellDef="let element" [attr.rowspan]="element.isFirstServer ? element.hostRowSpan : null"
+            [style.display]="element.isFirstServer ? 'table-cell' : 'none'" class="host-cell"
+            (click)="onHostClicked(element, $event)">
+            {{element.host.name}}
+        </th>
+    </ng-container>
+
+    <!-- AppName Column -->
+    <ng-container matColumnDef="appName">
+        <th mat-header-cell *matHeaderCellDef>App Name</th>
+        <td mat-cell *matCellDef="let element">
+            <server-status-indicator [status]="element.server.latestStatus?.status">
+                <span slot="suffix">{{ element.server.appName }}</span>
+            </server-status-indicator>
+        </td>
+    </ng-container>
+
+    <!-- Version Column -->
+    <ng-container matColumnDef="version">
+        <th mat-header-cell *matHeaderCellDef>Version</th>
+        <td mat-cell *matCellDef="let element">
+            @if (element.server.version) {
+                <prefix-pictogram [icon]="'tag'" [iconColor]="element.server.version | hashColor" [label]="element.server.version"/>
+            }
+        </td>
+    </ng-container>
+
+    <!-- Port Column -->
+    <ng-container matColumnDef="port">
+        <th mat-header-cell *matHeaderCellDef>Port</th>
+        <td mat-cell *matCellDef="let element">{{element.server.port}}</td>
+    </ng-container>
+
+    <!-- Type Column -->
+    <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let element">{{element.server.type}}</td>
+    </ng-container>
+
+    <!-- CronStartTime Column -->
+    <ng-container matColumnDef="cronStartTime">
+        <th mat-header-cell *matHeaderCellDef>Cron Start Time</th>
+        <td mat-cell *matCellDef="let element">{{element.server.cronStartTime | cronDescription}}</td>
+    </ng-container>
+
+    <!-- CronStopTime Column -->
+    <ng-container matColumnDef="cronStopTime">
+        <th mat-header-cell *matHeaderCellDef>Cron Stop Time</th>
+        <td mat-cell *matCellDef="let element">{{element.server.cronStopTime | cronDescription}}</td>
+    </ng-container>
+
+    <!-- Status Column -->
+    <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let element">{{element.server.latestStatus?.status}}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="serverColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: serverColumns;" (click)="onServerClicked(row)"></tr>
+</table>

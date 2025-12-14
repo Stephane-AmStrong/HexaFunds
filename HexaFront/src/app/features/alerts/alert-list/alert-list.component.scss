@@ -1,0 +1,13 @@
+main {
+  margin: 0.5rem;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-container{
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}

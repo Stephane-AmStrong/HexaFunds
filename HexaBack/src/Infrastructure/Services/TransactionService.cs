@@ -1,9 +1,9 @@
-﻿using Application.DataTransfertObjects;
-using Application.Services.Abstractions;
-
+﻿using Application.Abstractions.Services;
+using Application.DataTransfertObjects;
+using Domain.Abstractions.Repositories;
 using Domain.Entities;
-using Domain.Exceptions;
-using Domain.Repositories.Abstractions;
+using Domain.Errors;
+using Domain.Abstractions.Repositories;
 
 using Mapster;
 
@@ -11,7 +11,7 @@ namespace Services;
 
 public sealed class TransactionService(
     ITransactionRepository transactionRepository,
-    ICheckingAccountRepository checkingAccountRepository,
+    ICheckingAccountsRepository checkingAccountsRepository,
     ISavingsAccountRepository savingsAccountRepository,
     IBankAccountRepository bankAccountRepository,
     IUnitOfWork unitOfWork
@@ -36,7 +36,7 @@ public sealed class TransactionService(
 
             await transactionRepository.CreateAsync(transaction, cancellationToken).ConfigureAwait(false);
 
-            checkingAccountRepository.Update(checkingAccount);
+            checkingAccountsRepository.Update(checkingAccount);
         }
 
         if (account is SavingsAccount savingsAccount)

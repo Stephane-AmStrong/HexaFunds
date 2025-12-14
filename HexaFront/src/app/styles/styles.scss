@@ -1,0 +1,65 @@
+@use '@angular/material' as mat;
+@use 'theme-colors' as wt-theme;
+@use "ag-grid-community/styles" as ag;
+
+html {
+  color-scheme: light dark;
+
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: wt-theme.$primary-palette,
+      tertiary: wt-theme.$tertiary-palette,
+      neutral: wt-theme.$neutral-palette,
+      neutral-variant: wt-theme.$neutral-variant-palette,
+      error: wt-theme.$error-palette,
+    ),
+    typography: (
+      plain-family: Roboto,
+      brand-family: Open Sans,
+      bold-weight: 900,
+      medium-weight: 500,
+      regular-weight: 300,
+    ),
+    density: 0,
+  ));
+
+  // Dark theme
+  @media (prefers-color-scheme: dark) {
+    @include mat.theme((
+      color: (
+        theme-type: dark,
+        primary: wt-theme.$primary-palette,
+        secondary: wt-theme.$secondary-palette,
+        tertiary: wt-theme.$tertiary-palette,
+        neutral: wt-theme.$neutral-palette,
+        neutral-variant: wt-theme.$neutral-variant-palette,
+        error: wt-theme.$error-palette,
+      ),
+      density: 0,
+    ));
+  }
+
+  // High contrast support
+  @media (prefers-contrast: more) {
+    @include wt-theme.high-contrast-overrides(color-scheme);
+  }
+
+  .ag-theme-quartz {
+    --ag-background-color: var(--mat-sys-surface);
+    --ag-foreground-color: var(--mat-sys-on-surface);
+    --ag-header-foreground-color: var(--mat-sys-on-surface);
+    --ag-header-background-color: var(--mat-sys-surface-variant);
+    --ag-odd-row-background-color: var(--mat-sys-surface-container-low);
+    --ag-header-column-resize-handle-color: var(--mat-sys-outline);
+    --ag-border-color: var(--mat-sys-outline-variant);
+    --ag-row-hover-color: var(--mat-sys-surface-variant);
+    --ag-selected-row-background-color: var(--mat-sys-primary-container);
+
+    --ag-accent-color: var(--mat-sys-primary);
+    --ag-border-radius: 0.25rem;
+    --ag-header-font-weight: 500;
+    --ag-spacing: 0.5rem;
+    --ag-wrapper-border-radius: 0.75rem;
+}
+}

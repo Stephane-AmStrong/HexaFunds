@@ -1,0 +1,29 @@
+table {
+  width: 100%;
+}
+
+.mat-mdc-row .mat-mdc-cell {
+  cursor: pointer;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell:not(.host-cell) {
+  background-color: var(--mat-sys-surface-variant);
+}
+
+.host-cell {
+  border-right: 0.0625rem solid;
+  border-bottom: 0.0625rem solid;
+  cursor: pointer;
+}
+
+.mat-mdc-row .host-cell:hover {
+  background-color: var(--mat-sys-surface-variant);
+}
+
+.mat-mdc-row .host-cell:hover ~ .mat-mdc-cell {
+  background-color: transparent;
+}
+
+.mat-mdc-row:last-child .host-cell {
+  border-bottom: none;
+}

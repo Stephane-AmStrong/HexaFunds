@@ -1,7 +1,7 @@
 using Application.DataTransfertObjects;
 using Domain.Entities;
-using Domain.Exceptions;
-using Domain.Repositories.Abstractions;
+using Domain.Errors;
+using Domain.Abstractions.Repositories;
 using Moq;
 using Services;
 namespace Service.Test;
@@ -10,7 +10,7 @@ public class SavingsAccountServiceTest
 {
     private readonly Mock<ISavingsAccountRepository> _mockSavingsAccountRepository;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly SavingsAccountService _savingsAccountService;
+    private readonly SavingsAccountsService _savingsAccountService;
     private readonly CancellationToken _cancellationToken;
     private readonly List<SavingsAccount> _savingsAccounts;
 

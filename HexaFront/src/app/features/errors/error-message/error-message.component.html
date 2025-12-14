@@ -1,0 +1,8 @@
+<main>
+    <img class="course-image mat-elevation-z10" [src]="imageUrl()" [alt]="title()">
+    <h1>{{ title() }}</h1>
+    <p>{{ message() }}</p>
+    @if (actionLabel() && actionUrl()) {
+    <a matButton="elevated" [routerLink]="actionUrl()">{{ actionLabel() }}</a>
+    }
+</main>

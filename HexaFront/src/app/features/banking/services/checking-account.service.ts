@@ -7,7 +7,7 @@ import { HttpWrapperService } from './http-wrapper.service';
 @Injectable({
   providedIn: 'root',
 })
-export class CheckingAccountService {
+export class CheckingAccountsService {
   private BASE_URL: string = `checkingaccounts`;
   private http = inject(HttpWrapperService);
   private refreshTrigger = new BehaviorSubject<void>(undefined);

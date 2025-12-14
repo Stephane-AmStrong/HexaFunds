@@ -1,0 +1,9 @@
+<figure>
+    <ng-content select="[slot='prefix']"></ng-content>
+    
+    <mat-icon [style.color]="status() === 'Up' ? 'var(--mat-sys-secondary)' : 'var(--mat-sys-error)'">
+        {{ status() === 'Up' ? 'cloud_done' : 'cloud_off' }}
+    </mat-icon>
+    
+    <ng-content select="[slot='suffix']"></ng-content>
+</figure>

@@ -1,9 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>$(WatchtowerTargetFramework)</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Domain\Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Mapster"/>
+      <PackageReference Include="FluentValidation"/>
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
+      <PackageReference Include="MCS.WatchTower.WebApi.DataTransferObjects"/>
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
+    </ItemGroup>
 
 </Project>

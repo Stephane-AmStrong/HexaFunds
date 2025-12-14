@@ -1,0 +1,61 @@
+@if (!clientDetail()) {
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+} @else if (clientDetail(); as client) {
+  <toolbar />
+
+  <main>
+    <!-- Header -->
+    <header>
+      <mat-icon>dns</mat-icon>
+      <h1>{{ client.gaia }} - {{ client.login }}</h1>
+    </header>
+
+    <mat-grid-list cols="2" rowHeight="10rem" gutterSize="1rem">
+      <!-- GAIA -->
+      <mat-grid-tile rowspan="1" colspan="1">
+        <detail-card>
+          <div class="header-label" slot=card-header>
+              <mat-icon>badge</mat-icon>
+              <mat-card-title>GAIA</mat-card-title>
+          </div>
+          <p slot="card-content">{{ client.gaia }}</p>
+        </detail-card>
+      </mat-grid-tile>
+
+      <!-- Login -->
+      <mat-grid-tile rowspan="1" colspan="1">
+        <detail-card>
+          <div class="header-label" slot=card-header>
+              <mat-icon>person</mat-icon>
+              <mat-card-title>Login</mat-card-title>
+          </div>
+          <p slot="card-content">{{ client.login }}</p>
+        </detail-card>
+      </mat-grid-tile>
+
+        <!-- Tabs -->
+        <mat-grid-tile rowspan="5" colspan="2">
+            <!-- Active Connections -->
+            <detail-card>
+                <mat-tab-group slot="card-content">
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                            <span class="header-label">
+                                <mat-icon>link</mat-icon>
+                                <span>Active Connections ({{ connections().length }})</span>
+                            </span>
+                        </ng-template>
+                        <connection-table [connections]="connections()" />
+                    </mat-tab>
+                </mat-tab-group>
+            </detail-card>
+        </mat-grid-tile>
+    </mat-grid-list>
+  </main>
+} @else {
+  <article class="error-article">
+    <mat-icon>error_outline</mat-icon>
+    <h1>Client Not Found</h1>
+    <p>The requested client could not be found.</p>
+  </article>
+}

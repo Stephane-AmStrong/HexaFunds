@@ -1,0 +1,54 @@
+# Build pipeline - triggered on Pull Requests
+# This pipeline only builds and tests the application without deploying
+
+trigger: none
+
+# Pull Request trigger - build on all PRs
+pr:
+  branches:
+    include:
+      - '*'
+  drafts: true
+
+variables:
+  nodeVersion: '22.x'
+  angularCliVersion: '20.1.6'
+  distPath: 'dist'
+
+stages:
+  # ============================================
+  # BUILD & TEST
+  # ============================================
+  - stage: Build
+    displayName: 'Build & Test'
+    pool:
+      name: MCS
+    jobs:
+      - job: BuildJob
+        displayName: 'Build App'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '$(nodeVersion)'
+            displayName: 'Setup Node.js'
+
+          - script: npm install -g @angular/cli@$(angularCliVersion)
+            displayName: 'Install Angular CLI'
+
+          - script: npm install
+            displayName: 'Install dependencies'
+
+          - script: npm run test:pipeline
+            displayName: 'Run unit tests'
+
+          - script: |
+              call npm run build:dev || exit /b 1
+              call npm run build:uat || exit /b 1
+              call npm run build:prod || exit /b 1
+            displayName: 'Build all environments'
+
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: '$(distPath)'
+              artifactName: 'dist'
+            displayName: 'Publish dist artifact'

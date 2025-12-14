@@ -1,0 +1,22 @@
+.dashboard-container {
+  margin: 0.5rem;
+}
+
+section-monitoring-overview,
+section-applications,
+section-services,
+section-infrastructure,
+section-database-network {
+  position: absolute;
+  top: 2.5rem;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+mat-grid-tile-header {
+  background-color: var(--mat-primary-color) !important;
+  color: var(--mat-primary-contrast-color) !important;
+  font-family: var(--mat-app-headline-font), serif !important;
+  padding: 0 !important;
+}

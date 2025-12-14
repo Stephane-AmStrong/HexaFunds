@@ -1,0 +1,12 @@
+table {
+  width: 100%;
+}
+
+.mat-mdc-row .mat-mdc-cell {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+  background-color: var(--mat-sys-surface-variant);
+}

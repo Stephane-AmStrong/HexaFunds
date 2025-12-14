@@ -4,7 +4,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { AccountCardComponent } from '../../../../../shared/Components/account-card/account-card.component';
-import { CheckingAccountService } from '../../../services/checking-account.service';
+import { CheckingAccountsService } from '../../../services/checking-account.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CheckingAccountResponse } from '../../../models/checking-account-response';
 import { openCheckingAccountDialog } from '../checking-account-dialog/checking-account-dialog.component';
@@ -26,13 +26,13 @@ import { CheckingAccountRequest } from '../../../models/checking-account-request
   styleUrl: './checking-account-list.component.scss',
 })
 export class CheckingAccountListComponent {
-  private checkingAccountService = inject(CheckingAccountService);
+  private checkingAccountsService = inject(CheckingAccountsService);
   private dialog = inject(MatDialog);
 
   checkingAccounts = toSignal<
     CheckingAccountResponse[],
     CheckingAccountResponse[]
-  >(this.checkingAccountService.getAll(), {
+  >(this.checkingAccountsService.getAll(), {
     initialValue: [],
   });
 
@@ -46,7 +46,7 @@ export class CheckingAccountListComponent {
 
   create(checkingAccountRequest: CheckingAccountRequest) {
     if (!checkingAccountRequest.id) {
-      this.checkingAccountService
+      this.checkingAccountsService
         .create(checkingAccountRequest)
         .subscribe((newCheckingAccount) =>
           console.log(

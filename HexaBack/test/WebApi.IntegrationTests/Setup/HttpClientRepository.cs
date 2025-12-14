@@ -109,4 +109,23 @@ public class HttpClientRepository
             ? throw new InvalidOperationException($"Failed to deserialize the response to type {typeof(TResponse)}.")
             : result;
     }
+
+    /*
+    if (createRequest == null) throw new ArgumentNullException(nameof(createRequest));
+
+    try
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Post, RequestUri);
+        request.Content = JsonContent.Create(createRequest, options: _options);
+
+        using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        await using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        var createdAlert = await JsonSerializer.DeserializeAsync<TResponse>(contentStream, _options, cancellationToken);
+
+        _logger.LogInformation("Successfully created alert with ID {AlertId}", createdAlert?.Id);
+        return createdAlert;
+    }
+    */
 }

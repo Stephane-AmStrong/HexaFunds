@@ -1,0 +1,38 @@
+<mat-card class="server-card" appearance="outlined"  matRipple>
+  <mat-card-header>
+    <mat-card-title>{{ server().hostName }}</mat-card-title>
+    <mat-card-subtitle>{{ server().type }} • v{{ server().version }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item>
+        <mat-icon matListItemIcon>apps</mat-icon>
+        <div matListItemTitle>{{ server().appName }}</div>
+        <div matListItemLine>{{ server().port }}</div>
+      </mat-list-item>
+
+      <mat-list-item>
+        <div matListItemLine>
+          <mat-icon>play_arrow</mat-icon> {{ server().cronStartTime }}
+        </div>
+        <div matListItemLine>
+          <mat-icon>stop</mat-icon> {{ server().cronStopTime }}
+        </div>
+      </mat-list-item>
+
+      <!-- @if (server().latestStatus) {
+        <mat-list-item>
+          <mat-icon matListItemIcon color="accent">favorite</mat-icon>
+          <div matListItemTitle>Latest Status</div>
+          <div matListItemLine>{{ server().latestStatus!.recordedAt | date:'medium' }}</div>
+        </mat-list-item>
+      } -->
+    </mat-list>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button matButton (click)="onCopyToClipboard($event)">Copy</button>
+    <button matButton (click)="onShare($event)">Share</button>
+  </mat-card-actions>
+</mat-card>

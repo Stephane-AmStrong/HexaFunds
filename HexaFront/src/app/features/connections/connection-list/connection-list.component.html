@@ -1,0 +1,16 @@
+<toolbar />
+
+<main class="dashboard-container">
+  <h1 class="mat-h1">Connections</h1>
+
+  <mat-card class="grid-container mat-elevation-z8" appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>
+        Connections
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <connection-table [connections]="connections()" />
+    </mat-card-content>
+  </mat-card>
+</main>

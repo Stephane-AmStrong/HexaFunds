@@ -13,7 +13,7 @@ import {
   MatSlideToggleChange,
   MatSlideToggleModule,
 } from '@angular/material/slide-toggle';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { ThemeService } from '../../services/theme.service';
 
 @Component({
@@ -21,6 +21,7 @@ import { ThemeService } from '../../services/theme.service';
   standalone: true,
   imports: [
     RouterLink,
+    RouterLinkActive,
     FormsModule,
     MatSlideToggleModule,
     MatToolbarModule,

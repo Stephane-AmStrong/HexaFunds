@@ -1,0 +1,34 @@
+<mat-nav-list [style.display]="'flex'"
+                  [style.flex-direction]="'row'"
+                  [style.align-items]="'center'"
+                  [style.padding]="'0'"
+                  role="navigation"
+                  aria-label="Breadcrumb">
+    @for (breadcrumb of breadcrumbs(); track breadcrumb.url; let isLast = $last) {
+      @if (isLast) {
+
+          <mat-list-item [style.width]="'auto'">
+          <span matListItemTitle
+                  [style.color]="'var(--mat-sys-primary)'"
+                  [style.font-weight]="'500'">
+              {{ breadcrumb.label }}
+          </span>
+          </mat-list-item>
+      } @else {
+
+          <mat-list-item [routerLink]="breadcrumb.url"
+                          [style.width]="'auto'"
+                          [style.cursor]="'pointer'">
+          <span matListItemTitle
+                  [style.color]="'var(--mat-sys-on-surface-variant)'">
+              {{ breadcrumb.label }}
+          </span>
+          </mat-list-item>
+
+          <mat-icon [style.color]="'var(--mat-sys-outline)'"
+                  [style.margin]="'0 0.5rem'">
+          chevron_right
+          </mat-icon>
+      }
+    }
+</mat-nav-list>

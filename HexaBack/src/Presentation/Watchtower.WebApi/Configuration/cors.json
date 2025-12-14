@@ -1,0 +1,8 @@
+{
+    "CorsSettings": {
+        "AllowedOrigins": [
+            "https://localhost:4200",
+            "https://localhost:5173"
+        ]
+    }
+}

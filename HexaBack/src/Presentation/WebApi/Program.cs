@@ -1,6 +1,7 @@
 using AspNetCore.Swagger.Themes;
 using FluentValidation;
-using WebApi.Endpoinds;
+using Serilog;
+using WebApi.Endpoints;
 using WebApi.Extensions;
 using WebApi.Middleware;
 
@@ -8,14 +9,21 @@ using WebApplicationDocker.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configures Serilog
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.FromLogContext());
+
 builder.ConfigureDbContext();
 
 // Add services to the container.
-builder.Services.ConfigureCors();
+builder.Services.ConfigureCors(builder.Configuration);
 builder.Services.ConfigureJsonOptions();
+builder.Services.ConfigureValidation();
 builder.Services.ConfigureSwagger();
-builder.Services.ConfigureBankingRepositories();
-builder.Services.ConfigureBankingServices();
+builder.Services.ConfigureRepositories();
+builder.Services.ConfigureServices();
 builder.Services.ConfigureGlobalExceptionHandling();
 
 builder.Services.AddHealthChecks();

@@ -1,0 +1,25 @@
+<toolbar />
+
+<main class="dashboard-container">
+    <h1 class="mat-h1">{{hostDetail()?.name}}</h1>
+    <article>
+        <section>
+            <h2>Hosted services ({{hostDetail()?.servers?.length}})</h2>
+            @if (servers().length) {
+            <mat-card class="grid-container mat-elevation-z8" appearance="outlined">
+                <mat-card-content>
+                    <server-table [servers]="servers()" [serverColumns]="serverColumns" />
+                </mat-card-content>
+            </mat-card>
+            }@else {
+            <mat-card class="empty-state" appearance="outlined">
+                <mat-card-content class="empty-state-content">
+                    <mat-icon class="empty-state-icon">dns_off</mat-icon>
+                    <h2 class="mat-h2">No services found</h2>
+                    <p class="mat-body-1">This host does not have any associated services yet.</p>
+                </mat-card-content>
+            </mat-card>
+            }
+        </section>
+    </article>
+</main>

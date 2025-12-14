@@ -1,13 +1,13 @@
 ﻿using System.Linq.Expressions;
 
 using Domain.Entities;
-using Domain.Repositories.Abstractions;
+using Domain.Abstractions.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repository;
 
-public sealed class TransactionRepository(BankingDbContext dbContext) : RepositoryBase<Transaction>(dbContext), ITransactionRepository
+public sealed class TransactionsRepository(BankingDbContext dbContext) : RepositoryBase<Transaction>(dbContext), ITransactionsRepository
 {
     public async Task CreateAsync(Transaction transaction, CancellationToken cancellationToken)
     {

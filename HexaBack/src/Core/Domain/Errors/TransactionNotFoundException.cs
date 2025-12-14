@@ -1,0 +1,3 @@
+﻿namespace Domain.Errors;
+
+public sealed class TransactionNotFoundException(Guid id) : NotFoundException($"The transaction with the identifier {id} was not found.");

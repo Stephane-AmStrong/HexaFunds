@@ -1,0 +1,138 @@
+# Deployment pipeline - triggered manually from Azure DevOps GUI
+# This pipeline deploys to DEV, UAT, and PROD environments
+
+trigger: none
+
+variables:
+  nodeVersion: '22.x'
+  angularCliVersion: '20.1.6'
+  distPath: 'dist'
+
+stages:
+  # ============================================
+  # BUILD & TEST
+  # ============================================
+  - stage: Build
+    displayName: 'Build & Test'
+    pool:
+      name: MCS
+    jobs:
+      - job: BuildJob
+        displayName: 'Build App'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '$(nodeVersion)'
+            displayName: 'Setup Node.js'
+
+          - script: npm install -g @angular/cli@$(angularCliVersion)
+            displayName: 'Install Angular CLI'
+
+          - script: npm install
+            displayName: 'Install dependencies'
+
+          - script: npm run test:pipeline
+            displayName: 'Run unit tests'
+
+          - script: |
+              call npm run build:dev || exit /b 1
+              call npm run build:uat || exit /b 1
+              call npm run build:prod || exit /b 1
+            displayName: 'Build all environments'
+
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: '$(distPath)'
+              artifactName: 'dist'
+            displayName: 'Publish dist artifact'
+
+  # ============================================
+  # DEPLOY DEV
+  # ============================================
+  - ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'),eq(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
+    - stage: DeployDev
+      displayName: 'Deploy to DEV'
+      dependsOn: Build
+      condition: succeeded()
+      pool:
+        name: Release
+      jobs:
+        - deployment: DeployDevJob
+          displayName: 'Deploy DEV'
+          environment: 'dev'
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - task: DownloadPipelineArtifact@2
+                    inputs:
+                      artifactName: 'dist'
+                      targetPath: '$(Pipeline.Workspace)/dist'
+                    displayName: 'Download artifacts'
+
+                  - task: AzureRmWebAppDeployment@4
+                    inputs:
+                      azureSubscription: 'VNext-NoProd-MCS-Connector'
+                      WebAppName: 'watchtower-webapp-dev'
+                      packageForLinux: '$(Pipeline.Workspace)/dist/dev/browser'
+                    displayName: 'Deploy to Azure DEV'
+
+    # ============================================
+    # DEPLOY UAT
+    # ============================================
+    - stage: DeployUat
+      displayName: 'Deploy to UAT'
+      dependsOn: DeployDev
+      condition: succeeded()
+      pool:
+        name: Release
+      jobs:
+        - deployment: DeployUatJob
+          displayName: 'Deploy UAT'
+          environment: 'uat'
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - task: DownloadPipelineArtifact@2
+                    inputs:
+                      artifactName: 'dist'
+                      targetPath: '$(Pipeline.Workspace)/dist'
+                    displayName: 'Download artifacts'
+
+                  - task: AzureRmWebAppDeployment@4
+                    inputs:
+                      azureSubscription: 'VNext-NoProd-MCS-Connector'
+                      WebAppName: 'watchtower-webapp-uat'
+                      packageForLinux: '$(Pipeline.Workspace)/dist/uat/browser'
+                    displayName: 'Deploy to Azure UAT'
+
+    # ============================================
+    # DEPLOY PROD
+    # ============================================
+    - stage: DeployProd
+      displayName: 'Deploy to PROD'
+      dependsOn: DeployUat
+      condition: succeeded()
+      pool:
+        name: Release
+      jobs:
+        - deployment: DeployProdJob
+          displayName: 'Deploy PROD'
+          environment: 'prod'
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - task: DownloadPipelineArtifact@2
+                    inputs:
+                      artifactName: 'dist'
+                      targetPath: '$(Pipeline.Workspace)/dist'
+                    displayName: 'Download artifacts'
+
+                  - task: AzureRmWebAppDeployment@4
+                    inputs:
+                      azureSubscription: 'VNext-Prod-MCS-Connector'
+                      WebAppName: 'watchtower-webapp'
+                      packageForLinux: '$(Pipeline.Workspace)/dist/prod/browser'
+                    displayName: 'Deploy to Azure PROD'

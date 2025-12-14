@@ -11,7 +11,7 @@ namespace Persistence.Test;
 public class TransactionRepositoryTests : IDisposable
 {
     private readonly DbContextOptions<BankingDbContext> _dbContextOptions;
-    private readonly TransactionRepository _transactionRepository;
+    private readonly TransactionsRepository _transactionRepository;
     private readonly BankingDbContext _context;
     private readonly Transaction _creditTransaction;
     private readonly Transaction _debitTransaction;
@@ -24,7 +24,7 @@ public class TransactionRepositoryTests : IDisposable
             .Options;
         _context = new BankingDbContext(_dbContextOptions);
 
-        _transactionRepository = new TransactionRepository(_context);
+        _transactionRepository = new TransactionsRepository(_context);
 
         _bankAccount = new CheckingAccount
         {

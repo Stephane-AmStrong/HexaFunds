@@ -1,15 +1,14 @@
-﻿using Application.DataTransfertObjects;
-using Application.Services.Abstractions;
+﻿using Application.Abstractions.Services;
 
 using Domain.Entities;
-using Domain.Exceptions;
-using Domain.Repositories.Abstractions;
+using Domain.Errors;
+using Domain.Abstractions.Repositories;
 
 using Mapster;
 
 namespace Services;
 
-public sealed class SavingsAccountService(ISavingsAccountRepository savingsAccountRepository, IUnitOfWork unitOfWork) : ISavingsAccountService
+public sealed class SavingsAccountsService(ISavingsAccountRepository savingsAccountRepository, IUnitOfWork unitOfWork) : ISavingsAccountsService
 {
     public async Task<SavingsAccountResponse> CreateAsync(SavingsAccountRequest savingsAccountRequest, CancellationToken cancellationToken = default)
     {
