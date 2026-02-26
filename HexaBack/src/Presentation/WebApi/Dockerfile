@@ -1,11 +1,12 @@
 # syntax=docker/dockerfile:1
 
 # Etape de build
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 # Copie des fichiers de projet et restauration des dépendances avec utilisation de cache
+COPY ["Directory.Packages.props", "."]
 COPY ["src/Presentation/WebApi/WebApi.csproj", "Presentation/WebApi/"]
 RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages dotnet restore "Presentation/WebApi/WebApi.csproj"
 
@@ -19,7 +20,7 @@ FROM build AS publish
 RUN dotnet publish "WebApi.csproj" -c $BUILD_CONFIGURATION --use-current-runtime --self-contained false -o /app/publish
 
 # Etape finale avec l'image ASP.NET
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS final
 
 # Installer curl pour les healthchecks
 RUN apk add --no-cache curl
@@ -35,9 +36,6 @@ COPY --chown=$APP_UID:$APP_UID --from=publish /app/publish .
 
 # Copie du certificat PFX avec les bonnes permissions
 COPY --chown=$APP_UID:$APP_UID /src/Presentation/WebApi/https/aspnetapp.pfx /app/https/aspnetapp.pfx
-
-# Appliquer les migrations avant de démarrer l'application
-# RUN dotnet ef database update --project src/Infrastructure/Persistence --startup-project src/Presentation/WebApi/WebApi/
 
 # Exposition des ports
 EXPOSE 80
