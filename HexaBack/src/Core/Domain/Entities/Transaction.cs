@@ -1,12 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-
-using BankAccount.Core.Enumerations;
+using Domain.Enumerations;
 
 namespace Domain.Entities;
 
-public class Transaction
+public class Transaction : BaseEntity
 {
-    public Guid Id { get; init; }
     public float Amount { get; init; }
     public TransactionType Type { get; init; }
     public DateTime Date { get; init; }

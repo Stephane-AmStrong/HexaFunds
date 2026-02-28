@@ -1,4 +1,4 @@
-﻿namespace Domain.Repositories.Abstractions;
+namespace Domain.Abstractions.Repositories;
 
 public interface IBankAccountRepository
 {
