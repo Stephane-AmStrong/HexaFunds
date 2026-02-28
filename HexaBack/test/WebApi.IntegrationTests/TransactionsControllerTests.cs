@@ -1,5 +1,10 @@
 using System.Net;
 using Application.DataTransfertObjects;
+using Application.DataTransfertObjects.Enumerations;
+using Application.DataTransfertObjects.QueryParameters;
+using Application.DataTransfertObjects.Requests;
+using Application.DataTransfertObjects.Responses;
+using Application.UseCases.Transactions.GetByQuery;
 using Domain.Entities;
 
 using Microsoft.EntityFrameworkCore;
@@ -51,7 +56,7 @@ public class TransactionsControllerTests : IClassFixture<IntegrationTestWebFacto
         // Arrange
 
         // Act
-        using var httpMessage = await _httpClientRepository.Get(new TransactionQuery());
+        using var httpMessage = await _httpClientRepository.Get(new TransactionQuery(new TransactionQueryParameters()));
 
         // Assert
         Assert.NotNull(httpMessage);
@@ -146,8 +151,8 @@ public class TransactionsControllerTests : IClassFixture<IntegrationTestWebFacto
 
         var transactions = new[]
         {
-            new Transaction { Id = Guid.NewGuid(), Amount = 100, Date = DateTime.SpecifyKind(new DateTime(2024, 6, 4), DateTimeKind.Utc), Type = BankAccount.Core.Enumerations.TransactionType.Credit, AccountId = bankAccount.Id, BankAccount = bankAccount },
-            new Transaction { Id = Guid.NewGuid(), Amount = 200, Date = DateTime.SpecifyKind(new DateTime(2024, 6, 9), DateTimeKind.Utc), Type = BankAccount.Core.Enumerations.TransactionType.Debit, AccountId = bankAccount.Id, BankAccount = bankAccount },
+            new Transaction { Id = Guid.NewGuid(), Amount = 100, Date = DateTime.SpecifyKind(new DateTime(2024, 6, 4), DateTimeKind.Utc), Type = Domain.Enumerations.TransactionType.Credit, AccountId = bankAccount.Id, BankAccount = bankAccount },
+            new Transaction { Id = Guid.NewGuid(), Amount = 200, Date = DateTime.SpecifyKind(new DateTime(2024, 6, 9), DateTimeKind.Utc), Type = Domain.Enumerations.TransactionType.Debit, AccountId = bankAccount.Id, BankAccount = bankAccount },
         };
 
         await dbContext.CheckingAccounts.AddAsync(bankAccount);

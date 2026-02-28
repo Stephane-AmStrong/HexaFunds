@@ -1,7 +1,5 @@
-using BankAccount.Core.Enumerations;
-
 using Domain.Entities;
-
+using Domain.Enumerations;
 using Microsoft.EntityFrameworkCore;
 
 using Persistence.Repository;
@@ -94,7 +92,7 @@ public class TransactionRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void GetByCondition_ShouldReturnFilteredTransactions()
+    public async Task GetByCondition_ShouldReturnFilteredTransactions()
     {
         var transactions = new List<Transaction>
         {
@@ -105,7 +103,7 @@ public class TransactionRepositoryTests : IDisposable
         _context.Transactions.AddRange(transactions);
         _context.SaveChanges();
 
-        var result = _transactionRepository.GetByCondition(t => t.AccountId == _bankAccount.Id).ToList();
+        var result = (await _transactionRepository.FindByConditionAsync(t => t.AccountId == _bankAccount.Id, CancellationToken.None)).ToList();
 
         Assert.Equal(transactions.Count, result.Count);
         Assert.Equal(transactions.First().AccountId, result.First().AccountId);
