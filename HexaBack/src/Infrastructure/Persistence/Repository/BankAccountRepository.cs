@@ -1,4 +1,4 @@
-﻿using Domain.Repositories.Abstractions;
+﻿using Domain.Abstractions.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 namespace Persistence.Repository;

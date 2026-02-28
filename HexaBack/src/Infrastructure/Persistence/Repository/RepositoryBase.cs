@@ -1,12 +1,10 @@
 ﻿using System.Linq.Expressions;
 
-using Domain.Repositories.Abstractions;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repository;
 
-public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
+public abstract class RepositoryBase<T> where T : class
 {
     protected RepositoryBase(BankingDbContext dbContext) => BankingDbContext = dbContext;
 
