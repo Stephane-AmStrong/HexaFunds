@@ -1,0 +1,6 @@
+@HexaFunds.WebApi_HostAddress = http://localhost:5158
+
+GET {{HexaFunds.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
