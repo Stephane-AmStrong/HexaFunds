@@ -1,3 +1,5 @@
+using Application.DataTransfertObjects.QueryParameters;
+using Application.UseCases.CheckingAccounts.GetByQuery;
 using Domain.Entities;
 
 using Microsoft.EntityFrameworkCore;
@@ -67,9 +69,9 @@ public class CheckingAccountRepositoryTests : IDisposable
         _context.CheckingAccounts.AddRange(_checkingAccounts);
         await _context.SaveChangesAsync();
 
-        var result = _checkingAccountRepository.GetAll();
+        var result = await _checkingAccountRepository.GetPagedListByQueryAsync(new CheckingAccountQuery(new CheckingAccountQueryParameters()), CancellationToken.None);
 
-        Assert.Equal(2, result.Count());
+        Assert.Equal(2, result.Count);
     }
 
     [Fact]

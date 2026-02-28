@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Presentation\WebApi\WebApi.csproj" />
+    <ProjectReference Include="..\..\src\Presentation\HexaFunds.WebApi\HexaFunds.WebApi.csproj" />
   </ItemGroup>
 
 </Project>
