@@ -44,10 +44,10 @@ public sealed class SavingsAccountRepository(BankingDbContext dbContext) : Repos
 
         if (!string.IsNullOrWhiteSpace(queryParameters.SearchTerm))
         {
-            filteredList = filteredList.Where(savingsAccount => savingsAccount.AccountNumber.Contains(queryParameters.SearchTerm, StringComparison.OrdinalIgnoreCase));
+            filteredList = filteredList.Where(savingsAccount => EF.Functions.Like(savingsAccount.AccountNumber, $"%{queryParameters.SearchTerm}%"));
         }
 
-        return await filteredList.Include(x=> x.Transactions).ApplySorting(queryParameters.OrderBy).ApplyPaging(queryParameters.Page, queryParameters.PageSize, cancellationToken);
+        return await filteredList.Include(x=> x.Transactions).ApplySorting(queryParameters.OrderBy ?? "AccountNumber").ApplyPaging(queryParameters.Page, queryParameters.PageSize, cancellationToken);
     }
 
     public void Update(SavingsAccount savingsAccount)

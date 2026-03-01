@@ -46,10 +46,10 @@ public sealed class TransactionRepository(BankingDbContext dbContext) : Reposito
 
         if (!string.IsNullOrWhiteSpace(queryParameters.SearchTerm))
         {
-            filteredList = filteredList.Include(x=> x.BankAccount).Where(transaction => transaction.BankAccount.AccountNumber.Contains(queryParameters.SearchTerm, StringComparison.OrdinalIgnoreCase));
+            filteredList = filteredList.Include(x=> x.BankAccount).Where(transaction => EF.Functions.Like(transaction.BankAccount.AccountNumber, $"%{queryParameters.SearchTerm}%"));
         }
 
-        return await filteredList.ApplySorting(queryParameters.OrderBy).ApplyPaging(queryParameters.Page, queryParameters.PageSize, cancellationToken);
+        return await filteredList.Include(x=> x.BankAccount).ApplySorting(queryParameters.OrderBy ?? "Date Desc").ApplyPaging(queryParameters.Page, queryParameters.PageSize, cancellationToken);
     }
 
     public void Update(Transaction transaction)
