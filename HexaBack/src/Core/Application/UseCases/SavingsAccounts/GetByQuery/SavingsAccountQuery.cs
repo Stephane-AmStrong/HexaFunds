@@ -13,7 +13,7 @@ public record SavingsAccountQuery : BaseQuery<SavingsAccount>
         {
             SetFilterExpression
             (
-                savingsAccount => (string.IsNullOrWhiteSpace(queryParameters.AccountNumber) || savingsAccount.AccountNumber == queryParameters.AccountNumber) && (queryParameters.BalanceLessThan <= 0 || savingsAccount.Balance <= queryParameters.BalanceLessThan) && (queryParameters.BalanceGreaterThan <= 0 || savingsAccount.Balance >= queryParameters.BalanceGreaterThan) && (queryParameters.BalanceCeilingLessThan <= 0 || savingsAccount.BalanceCeiling <= queryParameters.BalanceCeilingLessThan) && (queryParameters.BalanceCeilingGreaterThan <= 0 || savingsAccount.BalanceCeiling >= queryParameters.BalanceCeilingGreaterThan)
+                savingsAccount => (string.IsNullOrWhiteSpace(queryParameters.AccountNumber) || savingsAccount.AccountNumber == queryParameters.AccountNumber) && (queryParameters.BalanceLessThan == null || savingsAccount.Balance <= queryParameters.BalanceLessThan) && (queryParameters.BalanceGreaterThan == null || savingsAccount.Balance >= queryParameters.BalanceGreaterThan) && (queryParameters.BalanceCeilingLessThan == null || savingsAccount.BalanceCeiling <= queryParameters.BalanceCeilingLessThan) && (queryParameters.BalanceCeilingGreaterThan == null || savingsAccount.BalanceCeiling >= queryParameters.BalanceCeilingGreaterThan)
             );
         }
     }

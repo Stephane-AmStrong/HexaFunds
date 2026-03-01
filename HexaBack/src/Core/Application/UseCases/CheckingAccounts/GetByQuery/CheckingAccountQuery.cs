@@ -13,7 +13,7 @@ public record CheckingAccountQuery : BaseQuery<CheckingAccount>
         {
             SetFilterExpression
             (
-                checkingAccount => (string.IsNullOrWhiteSpace(queryParameters.AccountNumber) || checkingAccount.AccountNumber == queryParameters.AccountNumber) && (queryParameters.BalanceLessThan <= 0 || checkingAccount.Balance <= queryParameters.BalanceLessThan) && (queryParameters.BalanceGreaterThan <= 0 || checkingAccount.Balance >= queryParameters.BalanceGreaterThan) && (queryParameters.OverdraftLimitLessThan <= 0 || checkingAccount.OverdraftLimit <= queryParameters.OverdraftLimitLessThan) && (queryParameters.OverdraftLimitGreaterThan <= 0 || checkingAccount.OverdraftLimit >= queryParameters.OverdraftLimitGreaterThan)
+                checkingAccount => (string.IsNullOrWhiteSpace(queryParameters.AccountNumber) || checkingAccount.AccountNumber == queryParameters.AccountNumber) && (queryParameters.BalanceLessThan == null || checkingAccount.Balance <= queryParameters.BalanceLessThan) && (queryParameters.BalanceGreaterThan == null || checkingAccount.Balance >= queryParameters.BalanceGreaterThan) && (queryParameters.OverdraftLimitLessThan == null || checkingAccount.OverdraftLimit <= queryParameters.OverdraftLimitLessThan) && (queryParameters.OverdraftLimitGreaterThan == null || checkingAccount.OverdraftLimit >= queryParameters.OverdraftLimitGreaterThan)
             );
         }
     }
