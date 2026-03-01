@@ -11,7 +11,7 @@
     <Project Path="src/Presentation/HexaFunds.WebApi/HexaFunds.WebApi.csproj" />
   </Folder>
   <Folder Name="/test/">
-    <Project Path="test/Application.Test/Application.Test.csproj" />
+    <Project Path="test/Application.Test/Application.Tests.csproj" />
     <Project Path="test/Persistence.Test/Persistence.Test.csproj" />
     <Project Path="test/WebApi.IntegrationTests/WebApi.IntegrationTests.csproj" />
   </Folder>
