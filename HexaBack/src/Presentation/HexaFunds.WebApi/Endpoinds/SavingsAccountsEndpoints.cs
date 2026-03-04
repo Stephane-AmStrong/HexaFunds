@@ -9,7 +9,7 @@ using Application.UseCases.SavingsAccounts.GetById;
 using Application.UseCases.SavingsAccounts.GetByQuery;
 using Application.UseCases.SavingsAccounts.Update;
 using Domain.Shared.Common;
-using HexaFunds.WebApi.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
 
@@ -30,7 +30,7 @@ public static class SavingsAccountsEndpoints
             .WithName(nameof(GetSavingsAccountById));
 
         group.MapPost("/", CreateSavingsAccount)
-            .Produces<ApiErrorResponse>(StatusCodes.Status400BadRequest)
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces<SavingsAccountResponse>(StatusCodes.Status201Created);
 
         group.MapDelete("/{id:guid}", DeleteSavingsAccount)
@@ -38,7 +38,7 @@ public static class SavingsAccountsEndpoints
             .Produces(StatusCodes.Status404NotFound);
 
         group.MapPut("/{id:guid}", UpdateSavingsAccount)
-            .Produces<ApiErrorResponse>(StatusCodes.Status400BadRequest)
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);
