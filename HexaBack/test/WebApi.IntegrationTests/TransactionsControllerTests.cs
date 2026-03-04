@@ -1,5 +1,4 @@
 using System.Net;
-using Application.DataTransfertObjects;
 using Application.DataTransfertObjects.Enumerations;
 using Application.DataTransfertObjects.QueryParameters;
 using Application.DataTransfertObjects.Requests;

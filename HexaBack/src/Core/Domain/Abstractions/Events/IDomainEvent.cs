@@ -1,5 +1,3 @@
-using Domain.Entities;
-
 namespace Domain.Abstractions.Events;
 
 public interface IDomainEvent;

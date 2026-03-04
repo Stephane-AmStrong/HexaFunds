@@ -1,10 +1,7 @@
 ﻿using System.Text.Json;
 using Domain.Exceptions;
-using HexaFunds.WebApi.Models;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace HexaFunds.WebApi.Middleware;
 

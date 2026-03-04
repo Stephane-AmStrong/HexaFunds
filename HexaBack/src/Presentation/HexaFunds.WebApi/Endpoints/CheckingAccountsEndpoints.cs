@@ -10,10 +10,10 @@ using Application.UseCases.CheckingAccounts.GetByQuery;
 using Application.UseCases.CheckingAccounts.Update;
 using Domain.Shared.Common;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
+using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
-namespace HexaFunds.WebApi.Endpoinds;
+namespace HexaFunds.WebApi.Endpoints;
 
 public static class CheckingAccountsEndpoints
 {

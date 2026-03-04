@@ -1,5 +1,4 @@
 using Application.DataTransfertObjects;
-using Application.DataTransfertObjects.Requests;
 
 namespace Application.Models;
 

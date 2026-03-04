@@ -1,5 +1,5 @@
 using FluentValidation;
-using HexaFunds.WebApi.Endpoinds;
+using HexaFunds.WebApi.Endpoints;
 using HexaFunds.WebApi.Extensions;
 using HexaFunds.WebApi.Middleware;
 using Serilog;

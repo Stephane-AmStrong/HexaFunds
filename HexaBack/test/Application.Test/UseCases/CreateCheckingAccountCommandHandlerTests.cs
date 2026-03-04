@@ -5,7 +5,6 @@ using AutoFixture;
 using AutoFixture.AutoNSubstitute;
 using Domain.Abstractions.Repositories;
 using Domain.Entities;
-using Domain.Exceptions;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Logging;
 using NSubstitute;

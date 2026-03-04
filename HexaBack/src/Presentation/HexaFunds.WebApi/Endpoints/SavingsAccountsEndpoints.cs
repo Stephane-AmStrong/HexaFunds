@@ -10,10 +10,10 @@ using Application.UseCases.SavingsAccounts.GetByQuery;
 using Application.UseCases.SavingsAccounts.Update;
 using Domain.Shared.Common;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
+using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
-namespace HexaFunds.WebApi.Endpoinds;
+namespace HexaFunds.WebApi.Endpoints;
 
 public static class SavingsAccountsEndpoints
 {

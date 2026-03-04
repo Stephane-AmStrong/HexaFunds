@@ -8,10 +8,11 @@ using Application.UseCases.Transactions.GetById;
 using Application.UseCases.Transactions.GetByQuery;
 using Domain.Shared.Common;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
+using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
-namespace HexaFunds.WebApi.Endpoinds;
+
+namespace HexaFunds.WebApi.Endpoints;
 
 public static class TransactionsEndpoints
 {
