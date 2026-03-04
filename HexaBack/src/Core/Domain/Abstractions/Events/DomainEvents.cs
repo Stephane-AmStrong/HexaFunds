@@ -1,5 +1,3 @@
-using Domain.Entities;
-
 namespace Domain.Abstractions.Events;
 
 public record CreatedEvent<T>(T Record) : IDomainEvent<T> where T : IBaseEntity;

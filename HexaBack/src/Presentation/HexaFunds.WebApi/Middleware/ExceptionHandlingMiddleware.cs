@@ -1,70 +1,87 @@
 ﻿using System.Text.Json;
 using Domain.Exceptions;
-using HexaFunds.WebApi.Models;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HexaFunds.WebApi.Middleware;
 
-internal sealed class ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> logger) : IMiddleware
+internal sealed class ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> logger, IProblemDetailsService problemDetailsService) : IExceptionHandler
 {
-    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
-    {
-        try
-        {
-            await next(context);
-        }
-        catch (Exception e)
-        {
-            LogException(e);
-            await HandleExceptionAsync(context, e);
-        }
-    }
-    private static async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
-    {
-        if (httpContext.Response.HasStarted) return;
 
+    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
+    {
+        LogException(exception);
         httpContext.Response.Clear();
         httpContext.Response.ContentType = "application/json";
 
-        var (statusCode, errorResponse) = GetErrorResponse(exception, httpContext.TraceIdentifier);
+        var (statusCode, problemDetails) = GetErrorResponse(exception);
         httpContext.Response.StatusCode = statusCode;
 
-        var options = new JsonSerializerOptions
+        return await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
-
-        await httpContext.Response.WriteAsync(JsonSerializer.Serialize(errorResponse, options));
+            HttpContext = httpContext,
+            Exception = exception,
+            ProblemDetails = problemDetails
+        });
     }
 
-    private static (int StatusCode, ApiErrorResponse Response) GetErrorResponse(Exception exception, string traceId)
+    private (int StatusCode, ProblemDetails problemDetails) GetErrorResponse(Exception exception)
     {
         return exception switch
         {
             OperationCanceledException => (
                 StatusCodes.Status408RequestTimeout,
-                ApiErrorResponse.RequestTimeout(traceId)
+                new ProblemDetails
+                {
+                    Title = "The request timed out",
+                    Type = StatusCodes.Status408RequestTimeout.ToString(),
+                    Detail = "The operation was canceled or timed out"
+                }
             ),
             BadRequestException validationEx => (
                 StatusCodes.Status400BadRequest,
-                ApiErrorResponse.ValidationError(
-                    validationEx.Errors ?? new Dictionary<string, string[]>(),
-                    traceId)
+                new ProblemDetails
+                {
+                    Title = "One or more validation errors occurred",
+                    Type = StatusCodes.Status400BadRequest.ToString(),
+                    Detail = string.Join(", ", validationEx?.Errors?.SelectMany(error => error.Value) ?? [])
+                }
             ),
             BadHttpRequestException httpEx => (
                 StatusCodes.Status400BadRequest,
-                ApiErrorResponse.BadRequest(httpEx.Message, traceId)
+                new ProblemDetails
+                {
+                    Title = "Bad request",
+                    Type = StatusCodes.Status400BadRequest.ToString(),
+                    Detail = httpEx.Message
+                }
             ),
             NotFoundException notFoundEx => (
                 StatusCodes.Status404NotFound,
-                ApiErrorResponse.NotFound(notFoundEx.Message, traceId)
+                new ProblemDetails
+                {
+                    Title = "Resource not found",
+                    Type = StatusCodes.Status404NotFound.ToString(),
+                    Detail = notFoundEx.Message
+                }
             ),
             JsonException => (
                 StatusCodes.Status400BadRequest,
-                ApiErrorResponse.InvalidJson(traceId)
+                new ProblemDetails
+                {
+                    Title = "Invalid JSON format",
+                    Type = StatusCodes.Status400BadRequest.ToString(),
+                    Detail = "Invalid JSON format provided"
+                }
             ),
             _ => (
                 StatusCodes.Status500InternalServerError,
-                ApiErrorResponse.InternalServerError(traceId)
+                new ProblemDetails
+                {
+                    Title = "An internal server error occurred",
+                    Type = StatusCodes.Status500InternalServerError.ToString(),
+                    Detail = "An unexpected error occurred. Please try again later"
+                }
             )
         };
     }

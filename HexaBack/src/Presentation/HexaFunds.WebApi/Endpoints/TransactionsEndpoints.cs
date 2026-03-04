@@ -7,11 +7,12 @@ using Application.UseCases.Transactions.Create;
 using Application.UseCases.Transactions.GetById;
 using Application.UseCases.Transactions.GetByQuery;
 using Domain.Shared.Common;
-using HexaFunds.WebApi.Models;
-using Microsoft.AspNetCore.Http.Json;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
-namespace HexaFunds.WebApi.Endpoinds;
+
+namespace HexaFunds.WebApi.Endpoints;
 
 public static class TransactionsEndpoints
 {
@@ -28,7 +29,7 @@ public static class TransactionsEndpoints
             .WithName(nameof(GetTransactionById));
 
         group.MapPost("/", CreateTransaction)
-            .Produces<ApiErrorResponse>(StatusCodes.Status400BadRequest)
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces<TransactionResponse>(StatusCodes.Status201Created);
     }
 

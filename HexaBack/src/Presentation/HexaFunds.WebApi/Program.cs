@@ -1,5 +1,5 @@
 using FluentValidation;
-using HexaFunds.WebApi.Endpoinds;
+using HexaFunds.WebApi.Endpoints;
 using HexaFunds.WebApi.Extensions;
 using HexaFunds.WebApi.Middleware;
 using Serilog;
@@ -45,7 +45,8 @@ app.MapSavingsAccountsEndpoints();
 app.MapTransactionsEndpoints();
 
 app.UseMiddleware<EndpointLoggingMiddleware>();
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+// app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 

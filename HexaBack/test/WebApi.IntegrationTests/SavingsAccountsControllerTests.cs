@@ -1,5 +1,4 @@
 using System.Net;
-using Application.DataTransfertObjects;
 using Application.DataTransfertObjects.Requests;
 using Application.DataTransfertObjects.Responses;
 using Domain.Entities;
