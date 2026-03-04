@@ -1,8 +1,8 @@
 ﻿namespace HexaFunds.WebApi.Middleware;
 
-public class EndpointLoggingMiddleware(ILogger<EndpointLoggingMiddleware> logger) : IMiddleware
+public class EndpointLoggingMiddleware(RequestDelegate next, ILogger<EndpointLoggingMiddleware> logger)
 {
-    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+    public async Task InvokeAsync(HttpContext context)
     {
         var method = context.Request.Method;
         var path = context.Request.Path.ToString();

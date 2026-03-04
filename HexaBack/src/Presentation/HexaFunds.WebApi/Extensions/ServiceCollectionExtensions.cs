@@ -167,13 +167,15 @@ public static class ServiceCollectionExtensions
             options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         });
     }
 
     public static void ConfigureGlobalExceptionHandling(this IServiceCollection services)
     {
-        services.AddScoped<EndpointLoggingMiddleware>();
-        services.AddScoped<ExceptionHandlingMiddleware>();
+        // services.AddScoped<EndpointLoggingMiddleware>();
+        services.AddProblemDetails();
+        services.AddExceptionHandler<ExceptionHandlingMiddleware>();
     }
 
     public static IServiceCollection AddKestrelConfiguration(this IServiceCollection services, IConfiguration configuration)

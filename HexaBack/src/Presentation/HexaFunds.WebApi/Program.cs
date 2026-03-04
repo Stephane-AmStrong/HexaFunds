@@ -45,7 +45,8 @@ app.MapSavingsAccountsEndpoints();
 app.MapTransactionsEndpoints();
 
 app.UseMiddleware<EndpointLoggingMiddleware>();
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+// app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 
