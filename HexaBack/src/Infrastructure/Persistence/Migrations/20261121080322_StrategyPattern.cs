@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
-using Persistence.Configurations;
 
 #nullable disable
 
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class StratgyPattern : Migration
+    public partial class StrategyPattern : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,23 +18,19 @@ namespace Persistence.Migrations
                 name: "PK_BankAccount",
                 table: "BankAccount");
 
-            migrationBuilder.DropColumn(
-                name: "BalanceCeiling",
-                table: "BankAccount");
-
-            migrationBuilder.DropColumn(
-                name: "OverdraftLimit",
-                table: "BankAccount");
-
             migrationBuilder.RenameTable(
                 name: "BankAccount",
                 newName: "BankAccounts");
 
-            migrationBuilder.AddColumn<AccountBehaviorData>(
-                name: "AccountBehavior",
+            migrationBuilder.AlterColumn<string>(
+                name: "Discriminator",
                 table: "BankAccounts",
-                type: "jsonb",
-                nullable: false);
+                type: "character varying(20)",
+                maxLength: 20,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "character varying(21)",
+                oldMaxLength: 21);
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_BankAccounts",
@@ -62,25 +57,19 @@ namespace Persistence.Migrations
                 name: "PK_BankAccounts",
                 table: "BankAccounts");
 
-            migrationBuilder.DropColumn(
-                name: "AccountBehavior",
-                table: "BankAccounts");
-
             migrationBuilder.RenameTable(
                 name: "BankAccounts",
                 newName: "BankAccount");
 
-            migrationBuilder.AddColumn<float>(
-                name: "BalanceCeiling",
+            migrationBuilder.AlterColumn<string>(
+                name: "Discriminator",
                 table: "BankAccount",
-                type: "real",
-                nullable: true);
-
-            migrationBuilder.AddColumn<float>(
-                name: "OverdraftLimit",
-                table: "BankAccount",
-                type: "real",
-                nullable: true);
+                type: "character varying(21)",
+                maxLength: 21,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "character varying(20)",
+                oldMaxLength: 20);
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_BankAccount",

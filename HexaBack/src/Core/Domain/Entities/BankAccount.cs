@@ -1,21 +1,24 @@
-﻿using Domain.Extensions;
+﻿namespace Domain.Entities;
 
-namespace Domain.Entities;
-
-public record BankAccount(Guid Id, string AccountNumber, IAccountBehavior AccountBehavior, ICollection<Transaction> Transactions)
+public class BankAccount
 {
+    public Guid Id { get; init; }
+    public string AccountNumber { get; init; } = string.Empty;
+    public IAccountBehavior AccountBehavior { get; private set; } = default!;
+    public ICollection<Transaction> Transactions { get; init; } = new HashSet<Transaction>();
     public float Balance { get; set; }
-    public BankAccount(Guid id, string accountNumber, float balance, IAccountBehavior accountBehavior) : this(id, accountNumber, accountBehavior, new HashSet<Transaction>())
+
+    private AccountBehaviorData BehaviorData { get => AccountBehaviorData.FromDomain(AccountBehavior); set => AccountBehavior = value.ToDomain(); }
+
+    public BankAccount() { }
+
+    public BankAccount(Guid id, string accountNumber, float balance, IAccountBehavior accountBehavior)
     {
+        Id = id;
+        AccountNumber = accountNumber;
         Balance = balance;
+        AccountBehavior = accountBehavior;
     }
 
-    public BankAccount() : this(Guid.Empty, string.Empty, default!, new HashSet<Transaction>())
-    { }
-
-    public void ApplyTransaction(Transaction transaction)
-    {
-        AccountBehavior.ApplyTransaction(this, transaction);
-    }
+    public void ApplyTransaction(Transaction transaction) => AccountBehavior.ApplyTransaction(this, transaction);
 }
-

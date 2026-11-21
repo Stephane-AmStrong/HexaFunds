@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Enumerations;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 using Persistence.Repository;
@@ -8,6 +9,7 @@ namespace Persistence.Test;
 
 public class TransactionRepositoryTests : IDisposable
 {
+    private readonly SqliteConnection _connection = new("DataSource=:memory:");
     private readonly DbContextOptions<BankingDbContext> _dbContextOptions;
     private readonly TransactionRepository _transactionRepository;
     private readonly BankingDbContext _context;
@@ -17,25 +19,24 @@ public class TransactionRepositoryTests : IDisposable
 
     public TransactionRepositoryTests()
     {
-        _dbContextOptions = new DbContextOptionsBuilder<BankingDbContext>()
-            .UseInMemoryDatabase(databaseName: $"BankingDb_{Guid.NewGuid()}")
-            .Options;
+        _connection.Open();
+        _dbContextOptions = new DbContextOptionsBuilder<BankingDbContext>().UseSqlite(_connection).Options;
         _context = new BankingDbContext(_dbContextOptions);
+        _context.Database.EnsureCreated();
 
         _transactionRepository = new TransactionRepository(_context);
 
-        _bankAccount = new CheckingAccount
-        {
-            Id = Guid.NewGuid(),
-            AccountNumber = "8487654321",
-            Balance = 700,
-        };
+        _bankAccount = new Domain.Entities.BankAccount(Guid.NewGuid(), "8487654321", 700, new CheckingBehavior(5000));
 
         _creditTransaction = new Transaction { Id = Guid.NewGuid(), Amount = 100, Date = new DateTime(2024, 6, 9), Type = TransactionType.Credit, AccountId = _bankAccount.Id, BankAccount = _bankAccount };
         _debitTransaction = new Transaction { Id = Guid.NewGuid(), Amount = 200, Date = new DateTime(2024, 6, 18), Type = TransactionType.Debit, AccountId = _bankAccount.Id, BankAccount = _bankAccount };
     }
 
-    public void Dispose() => _context.Dispose();
+    public void Dispose()
+    {
+        _context.Dispose();
+        _connection.Dispose();
+    }
 
     [Fact]
     public async Task CreateAsync_ShouldAddTransaction()

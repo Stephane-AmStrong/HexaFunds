@@ -1,5 +1,6 @@
 using Domain.Entities;
 
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 using Persistence.Repository;
@@ -8,6 +9,7 @@ namespace Persistence.Test;
 
 public class BankAccountRepositoryTests : IDisposable
 {
+    private readonly SqliteConnection _connection = new("DataSource=:memory:");
     private readonly DbContextOptions<BankingDbContext> _dbContextOptions;
     private readonly BankAccountRepository _bankAccountRepository;
     private readonly BankingDbContext _context;
@@ -16,18 +18,36 @@ public class BankAccountRepositoryTests : IDisposable
 
     public BankAccountRepositoryTests()
     {
-        _dbContextOptions = new DbContextOptionsBuilder<BankingDbContext>()
-            .UseInMemoryDatabase(databaseName: $"BankingDb_{Guid.NewGuid()}")
-            .Options;
+        _connection.Open();
+        _dbContextOptions = new DbContextOptionsBuilder<BankingDbContext>().UseSqlite(_connection).Options;
         _context = new BankingDbContext(_dbContextOptions);
+        _context.Database.EnsureCreated();
 
         _bankAccountRepository = new BankAccountRepository(_context);
 
-        _checkingAccount = new BankAccount(Guid.NewGuid(), "6789065432", 2000, new CheckingBehavior(5000));
-        _checkingAccount = new BankAccount(Guid.NewGuid(), "6789065432", 2000, new SavingsBehavior(5000));
+        _checkingAccount = new BankAccount(Guid.NewGuid(), "6789065432", 1000, new CheckingBehavior(5000));
+        _savingsAccount = new BankAccount(Guid.NewGuid(), "6789065433", 1000, new SavingsBehavior(5000));
     }
 
-    public void Dispose() => _context.Dispose();
+    [Fact]
+    public async Task SaveAndReload_ShouldRestoreBehaviorFromDiscriminatorColumns()
+    {
+        _context.BankAccounts.AddRange(_checkingAccount, _savingsAccount);
+        await _context.SaveChangesAsync();
+
+        await using var freshContext = new BankingDbContext(_dbContextOptions);
+        var checking = await freshContext.BankAccounts.FindAsync(_checkingAccount.Id);
+        var savings = await freshContext.BankAccounts.FindAsync(_savingsAccount.Id);
+
+        Assert.Equal(new CheckingBehavior(5000), checking!.AccountBehavior);
+        Assert.Equal(new SavingsBehavior(5000), savings!.AccountBehavior);
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
+        _connection.Dispose();
+    }
 
     [Fact]
     public async Task CreateAsync_ShouldAddBankAccount()

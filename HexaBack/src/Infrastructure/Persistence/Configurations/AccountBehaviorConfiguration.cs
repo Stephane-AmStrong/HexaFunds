@@ -8,8 +8,12 @@ public static class AccountBehaviorConfiguration
 {
     public static void Configure(EntityTypeBuilder<BankAccount> builder)
     {
-        builder.Property(b => b.AccountBehavior)
-            .HasConversion(new AccountBehaviorConverter())
-            .HasColumnType("jsonb");
+        builder.Ignore(b => b.AccountBehavior);
+        builder.ComplexProperty<AccountBehaviorData>("BehaviorData", c =>
+        {
+            c.Property(d => d.Type).HasColumnName("Discriminator").HasMaxLength(20).IsRequired();
+            c.Property(d => d.OverdraftLimit).HasColumnName("OverdraftLimit");
+            c.Property(d => d.BalanceCeiling).HasColumnName("BalanceCeiling");
+        });
     }
 }
